@@ -18,6 +18,9 @@ a WYSIWYG markdown editor based on [Milkdown](https://milkdown.dev/).
 - [x] 📝 **WYSIWYG Markdown - provides Typora-like seamless Markdown editing experience**
 # 📝 What's new
 
+## 0.6.1
+- `Two-column Editor` is now right above `Source code view`; the two views are mutually exclusive and both are unchecked when a document is opened or created
+
 ## 0.6.0
 - Remember the size and position of the window (optional, in Preferences); the default size/position is used when the saved one doesn't fit any monitor
 - Only ask to save when the document was really modified, no matter if it's closing, opening, creating or dropping a file
