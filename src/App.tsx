@@ -2,7 +2,7 @@ import MilkdownEditor from "./components/MilkdownEditor";
 import styles from './App.module.scss';
 import TitleBar from "./components/TitleBar";
 import { useAtom } from "jotai";
-import { contentJotai, filePathJotai, originalContentJotai, savedJotai, savingJotai } from "./jotais/file";
+import { contentJotai, filePathJotai, openFileJotai, originalContentJotai, savedJotai, savingJotai } from "./jotais/file";
 import { aboutJotai, loadingJotai, preferenceJotai, toolbarJotai, twoColumnJotai, vibrancyJotai } from "./jotais/ui";
 import classNames from "classnames";
 import { Spinner } from "@fluentui/react-components";
@@ -24,7 +24,8 @@ import localeData from '../locale';
 
 function App () {
     const [content, setContent] = useAtom(contentJotai);
-    const [filePath, setFilePath] = useAtom(filePathJotai);
+    const [filePath] = useAtom(filePathJotai);
+    const [, openFile] = useAtom(openFileJotai);
     const [loading] = useAtom(loadingJotai);
     const [, setToolbar] = useAtom(toolbarJotai);
     const [twoColumn] = useAtom(twoColumnJotai);
@@ -74,7 +75,7 @@ function App () {
         }
 
         const args: string[] = await invoke('get_args');
-        if (args.length > 1) setFilePath(args[1]);
+        if (args.length > 1) await openFile(args[1]);
     }, []);
 
     // Auto save

@@ -4,7 +4,7 @@ import { Folder16Regular } from '@fluentui/react-icons';
 import { useAtom } from 'jotai';
 import  { open as openFilePicker, save as saveFilePicker } from '@tauri-apps/api/dialog';
 import { documentDir } from '@tauri-apps/api/path';
-import { contentJotai, filePathJotai, savedJotai, savingJotai } from '../../jotais/file';
+import { contentJotai, dirtyJotai, filePathJotai, openFileJotai, saveAsJotai, savingJotai } from '../../jotais/file';
 import { writeTextFile } from '@tauri-apps/api/fs';
 import { aboutJotai, preferenceJotai } from '../../jotais/ui';
 import { FormattedMessage } from 'react-intl';
@@ -24,12 +24,14 @@ const availbleExportExts = [{
 }];
 
 const FileMenu: React.FC = () => {
-    const [filePath, setFilePath] = useAtom(filePathJotai);
-    const [content, setContent] = useAtom(contentJotai);
+    const [content] = useAtom(contentJotai);
+    const [filePath] = useAtom(filePathJotai);
+    const [dirty] = useAtom(dirtyJotai);
     const [, setPreference] = useAtom(preferenceJotai);
-    const [saved, setSaved] = useAtom(savedJotai);
     const [, setAbout] = useAtom(aboutJotai);
     const [, setSaving] = useAtom(savingJotai);
+    const [, openFile] = useAtom(openFileJotai);
+    const [, saveAs] = useAtom(saveAsJotai);
     return (
         <Menu>
             <MenuTrigger disableButtonEnhancement>
@@ -48,7 +50,7 @@ const FileMenu: React.FC = () => {
             <MenuPopover>
                 <MenuList>
                     <MenuItem onClick={async () => {
-                        setFilePath(null);
+                        await openFile(null);
                     }}>
                         <FormattedMessage
                             id='menu.file.new'
@@ -62,14 +64,15 @@ const FileMenu: React.FC = () => {
                             filters: availbleExts
                         });
                         if (selected === null) return;
-                        setFilePath(selected as string);
+                        await openFile(selected as string);
                     }}>
                         <FormattedMessage
                             id='menu.file.open'
                             defaultMessage='Open'
                         />
                     </MenuItem>
-                    <MenuItem disabled={filePath === null} onClick={async () => {
+                    {/* A blank document still has to be saved once to get a path */}
+                    <MenuItem disabled={!dirty && filePath !== null} onClick={async () => {
                         setSaving(true);
                     }}>
                         <FormattedMessage
@@ -78,17 +81,7 @@ const FileMenu: React.FC = () => {
                         />
                     </MenuItem>
                     <MenuItem onClick={async () => {
-                        // Store original jotai
-                        const originalFilePath = filePath;
-                        const originalContent = content;
-                        const originalSaved = saved;
-                        // If filePath is null, setSaving will trigged file picker automatically
-                        setFilePath(null);
-                        setSaving(true);
-                        // Restore original jotai
-                        setFilePath(originalFilePath);
-                        setContent(originalContent);
-                        setSaved(originalSaved);
+                        await saveAs();
                     }}>
                         <FormattedMessage
                             id='menu.file.saveAs'

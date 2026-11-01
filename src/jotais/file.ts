@@ -15,39 +15,8 @@ export const availbleExts = [{
     extensions: ['txt']
 }];
 
-/*
- * Current file path. If you change this, then contentJotai & savedJotai will be updated (Means 'Open')
- * If it's null, contentJotai will be set to null (Means 'New')
- */
-export const filePathJotai = atom(null, async (get, set, value: string | null) => {
-    if (!get(savedJotai)) {
-        const result = await confirm(
-            messages[get(settingsJotai).language].message['closeDialog.title'],
-            {
-                title: messages[get(settingsJotai).language].message['closeDialog.content'],
-                type: 'warning'
-            }
-        );
-
-        if (result) await set(savingJotai, true);
-    }
-
-    set(filePathJotai, value);
-
-    if (value !== null) {
-        try {
-            const textContent = await readTextFile(value);
-            set(contentJotai, textContent);
-            set(originalContentJotai, textContent);
-        } catch (e) {
-            alert(`Error occurred while opening file:\n${(e as Error).message}`);
-        }
-    } else {
-        set(contentJotai, '');
-        set(originalContentJotai, '');
-    }
-    set(savedJotai, true);
-});
+/** Path of the current file, null means the document wasn't saved yet. */
+export const filePathJotai = atom<string | null>(null);
 
 export const savedJotai = atom(true);
 
@@ -73,12 +42,70 @@ export const savingJotai = atom(false, async (get, set, value: boolean) => {
 
     try {
         await writeTextFile({ path, contents: get(contentJotai) });
+        set(filePathJotai, path);
         set(savedJotai, true);
         set(originalContentJotai, get(contentJotai));
     } catch (e) {
         alert(`Error occurred while saving file:\n${(e as Error).message}`);
     }
     set(savingJotai, false);
+});
+
+/**
+ * Open a file, or start a blank document when the path is null.
+ * Unsaved changes are saved before switching, the same way closing the app does.
+ */
+export const openFileJotai = atom(null, async (get, set, path: string | null) => {
+    if (get(dirtyJotai)) {
+        const result = await confirm(
+            messages[get(settingsJotai).language].message['closeDialog.title'],
+            {
+                title: messages[get(settingsJotai).language].message['closeDialog.content'],
+                type: 'warning'
+            }
+        );
+
+        if (result) await set(savingJotai, true);
+    }
+
+    if (path === null) {
+        set(filePathJotai, null);
+        set(contentJotai, '');
+        set(originalContentJotai, '');
+        set(savedJotai, true);
+        return;
+    }
+
+    try {
+        const textContent = await readTextFile(path);
+        set(filePathJotai, path);
+        set(contentJotai, textContent);
+        set(originalContentJotai, textContent);
+        set(savedJotai, true);
+    } catch (e) {
+        alert(`Error occurred while opening file:\n${(e as Error).message}`);
+    }
+});
+
+/**
+ * Save the content to another file and keep editing it there.
+ * Unlike saving, this never asks anything about the previous file.
+ */
+export const saveAsJotai = atom(null, async (get, set) => {
+    const path = await saveFilePicker({
+        defaultPath: await documentDir(),
+        filters: availbleExts
+    });
+    if (path === null) return;
+
+    try {
+        await writeTextFile({ path, contents: get(contentJotai) });
+        set(filePathJotai, path);
+        set(originalContentJotai, get(contentJotai));
+        set(savedJotai, true);
+    } catch (e) {
+        alert(`Error occurred while saving file:\n${(e as Error).message}`);
+    }
 });
 
 const defaultContent = `
