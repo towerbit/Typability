@@ -16,6 +16,8 @@ import { useKeyPress, useInterval, useEventListener, useAsyncEffect } from "ahoo
 import { version as getVersion, type as getType } from '@tauri-apps/api/os';
 import About from "./components/About";
 import { invoke } from '@tauri-apps/api/tauri';
+import { appWindow } from '@tauri-apps/api/window';
+import { TauriEvent } from '@tauri-apps/api/event';
 import FloatingToolbar from "./components/FloatingToolbar";
 import { Editor } from "@milkdown/core";
 import { IntlProvider } from 'react-intl';
@@ -76,6 +78,26 @@ function App () {
 
         const args: string[] = await invoke('get_args');
         if (args.length > 1) await openFile(args[1]);
+    }, []);
+
+    // Open the markdown file dropped onto the window
+    useEffect(() => {
+        let unlisten: (() => void) | undefined;
+        let disposed = false;
+
+        appWindow.listen<string[]>(TauriEvent.WINDOW_FILE_DROP, (event) => {
+            const dropped = event.payload.find((path) => /\.(md|txt)$/i.test(path));
+            // OpenFile asks to save unsaved changes before switching
+            if (dropped) openFile(dropped);
+        }).then((fn) => {
+            if (disposed) fn();
+            else unlisten = fn;
+        });
+
+        return () => {
+            disposed = true;
+            unlisten?.();
+        };
     }, []);
 
     // Auto save

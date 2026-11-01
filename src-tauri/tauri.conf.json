@@ -87,6 +87,7 @@
         "title": "Typability",
         "width": 540,
         "center": true,
+        "fileDropEnabled": true,
         "transparent": true,
         "decorations": false
       }
