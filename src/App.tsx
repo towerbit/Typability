@@ -9,6 +9,7 @@ import { Spinner } from "@fluentui/react-components";
 import { useEffect, useRef } from "react";
 import { FluentProvider, webLightTheme, webDarkTheme } from '@fluentui/react-components';
 import useIsDarkMode from "./hooks/dark";
+import useRememberWindowState from "./hooks/windowState";
 import Preferences from "./components/Preferences";
 import { settingsJotai } from "./jotais/settings";
 import { useKeyPress, useInterval, useEventListener, useAsyncEffect } from "ahooks";
@@ -35,6 +36,7 @@ function App () {
     const [about, setAbout] = useAtom(aboutJotai);
     const isDarkMode = useIsDarkMode();
     const editorInstance = useRef<Editor>(null);
+    useRememberWindowState();
 
     // Initialize
     useAsyncEffect(async () => {

@@ -198,6 +198,17 @@ const Preferences: React.FC<PerferencesProps> = ({
                         <div className={styles.option}>
                             <p className={styles.description}>
                                 <FormattedMessage
+                                    id="preferences.rememberWindowState"
+                                    defaultMessage="Remember window size and position"
+                                />
+                            </p>
+                            <Switch checked={settings.rememberWindowState} onChange={(e, data) => {
+                                setSetting('rememberWindowState', data.checked);
+                            }} />
+                        </div>
+                        <div className={styles.option}>
+                            <p className={styles.description}>
+                                <FormattedMessage
                                     id="preferences.autoSave"
                                     defaultMessage="Auto Save"
                                 />

@@ -29,6 +29,7 @@
   "preferences.language": "語言",
   "preferences.lightTheme": "編輯器主題（亮色）",
   "preferences.relaunch": "你需要重新啟動程序讓更改生效",
+  "preferences.rememberWindowState": "記住視窗大小和位置",
   "preferences.saveBlur": "當編輯器失去焦點時儲存",
   "preferences.saveInterval": "自動儲存間隔（秒）",
   "preferences.syntax": "Markdown 語法",
