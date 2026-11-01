@@ -42,8 +42,17 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
                 view: sourceView ? ['source'] : []
             }}
             onCheckedValueChange={(e, data) => {
-                if (data.name === 'twoColumnEditor') setTwoColumn(data.checkedItems.includes('twoColumn'));
-                if (data.name === 'view') setSourceView(data.checkedItems.includes('source'));
+                // The two views are mutually exclusive
+                if (data.name === 'twoColumnEditor') {
+                    const checked = data.checkedItems.includes('twoColumn');
+                    setTwoColumn(checked);
+                    if (checked) setSourceView(false);
+                }
+                if (data.name === 'view') {
+                    const checked = data.checkedItems.includes('source');
+                    setSourceView(checked);
+                    if (checked) setTwoColumn(false);
+                }
             }}
         >
             <MenuTrigger disableButtonEnhancement>
@@ -90,15 +99,6 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
                             defaultMessage='Add table'
                         />
                     </MenuItem>
-                    <MenuItemCheckbox
-                        name='twoColumnEditor'
-                        value='twoColumn'
-                    >
-                        <FormattedMessage
-                            id='menu.edit.twoColumnEditor'
-                            defaultMessage='Two-column Editor'
-                        />
-                    </MenuItemCheckbox>
                     <MenuItem onClick={() => {
                         if (!editorInstance.current) return;
                         const editorView = editorInstance.current.ctx.get(editorViewCtx);
@@ -134,6 +134,15 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
                         />
                     </MenuItem>
                     <MenuDivider />
+                    <MenuItemCheckbox
+                        name='twoColumnEditor'
+                        value='twoColumn'
+                    >
+                        <FormattedMessage
+                            id='menu.edit.twoColumnEditor'
+                            defaultMessage='Two-column Editor'
+                        />
+                    </MenuItemCheckbox>
                     <MenuItemCheckbox
                         name='view'
                         value='source'
