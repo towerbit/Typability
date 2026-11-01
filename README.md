@@ -18,7 +18,7 @@ a WYSIWYG markdown editor based on [Milkdown](https://milkdown.dev/).
 - [x] 📝 **WYSIWYG Markdown - provides Typora-like seamless Markdown editing experience**
 # 📝 What's new
 
-## 0.5.0
+## 0.6.0
 - Remember the size and position of the window (optional, in Preferences); the default size/position is used when the saved one doesn't fit any monitor
 - Only ask to save when the document was really modified, no matter if it's closing, opening, creating or dropping a file
 - `Save` is enabled only when there are changes, and `Save as` no longer shows a confirmation dialog on top of the system save dialog
@@ -26,6 +26,7 @@ a WYSIWYG markdown editor based on [Milkdown](https://milkdown.dev/).
 - A source code view (`Edit → Source code view`) to edit the raw markdown, every document opens in the WYSIWYG view
 - The current file name is shown in the title bar, the full path is available on hover
 - `Check Update` in the About dialog opens the GitHub releases page
+- Windows releases also ship a portable `Typability_<version>_x64_windows.zip` next to the installers
 
 # 🚧 Todo
 - [x] Multi-language support
