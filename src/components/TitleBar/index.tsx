@@ -53,11 +53,8 @@ const TitleBar : React.FC<TitleBar> = ({editorInstance}) => {
                     type: 'warning'
                 });
 
-                if (!result) return;
-
-                await setSaving(true);
-                // Keep the window open when saving was cancelled
-                if (getDefaultStore().get(dirtyJotai)) return;
+                // Declining only means "don't save", the window is closed either way
+                if (result) await setSaving(true);
             }
             await appWindow.close();
         });
