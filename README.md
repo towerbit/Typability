@@ -16,6 +16,16 @@ a WYSIWYG markdown editor based on [Milkdown](https://milkdown.dev/).
 - [x] **🌈 Fluent Design - Use FluentUI components with Mica\Arcylic background**
 - [x] **🪶 Lightweight - Bundle with tauri for smaller installer size and memory usage**
 - [x] 📝 **WYSIWYG Markdown - provides Typora-like seamless Markdown editing experience**
+# 📝 What's new
+
+## 0.5.0
+- Remember the size and position of the window (optional, in Preferences); the default size/position is used when the saved one doesn't fit any monitor
+- Only ask to save when the document was really modified, no matter if it's closing, opening, creating or dropping a file
+- `Save` is enabled only when there are changes, and `Save as` no longer shows a confirmation dialog on top of the system save dialog
+- Drop a markdown file onto the window to open it
+- The current file name is shown in the title bar, the full path is available on hover
+- `Check Update` in the About dialog opens the GitHub releases page
+
 # 🚧 Todo
 - [x] Multi-language support
 - [x] Find/Replace
