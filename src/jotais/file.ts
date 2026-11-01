@@ -18,6 +18,12 @@ export const availbleExts = [{
 /** Path of the current file, null means the document wasn't saved yet. */
 export const filePathJotai = atom<string | null>(null);
 
+const UNTITLED_PREFIX = 'Untitled';
+let untitledCount = 1;
+
+/** Name of the document while it has no path yet, e.g. Untitled-2 */
+export const untitledNameJotai = atom(`${UNTITLED_PREFIX}-1`);
+
 export const savedJotai = atom(true);
 
 /**
@@ -69,6 +75,8 @@ export const openFileJotai = atom(null, async (get, set, path: string | null) =>
     }
 
     if (path === null) {
+        untitledCount += 1;
+        set(untitledNameJotai, `${UNTITLED_PREFIX}-${untitledCount}`);
         set(filePathJotai, null);
         set(contentJotai, '');
         set(originalContentJotai, '');

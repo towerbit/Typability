@@ -8,7 +8,8 @@ import EditMenu from '../EditMenu';
 import { getDefaultStore, useAtom } from 'jotai';
 import { aboutJotai, preferenceJotai, vibrancyJotai } from '../../jotais/ui';
 import { Editor } from '@milkdown/core';
-import { dirtyJotai, savingJotai } from '../../jotais/file';
+import { dirtyJotai, filePathJotai, savingJotai, untitledNameJotai } from '../../jotais/file';
+import FilePath from './FilePath';
 import { useIntl } from 'react-intl';
 import { TauriEvent } from '@tauri-apps/api/event';
 import { confirm } from '@tauri-apps/api/dialog';
@@ -24,6 +25,8 @@ const TitleBar : React.FC<TitleBar> = ({editorInstance}) => {
     const [preference] = useAtom(preferenceJotai);
     const [about] = useAtom(aboutJotai);
     const [vibrancy] = useAtom(vibrancyJotai);
+    const [filePath] = useAtom(filePathJotai);
+    const [untitledName] = useAtom(untitledNameJotai);
     const [, setSaving] = useAtom(savingJotai);
     const titleBarRef = useRef<HTMLDivElement>(null);
     const intl = useIntl();
@@ -108,6 +111,7 @@ const TitleBar : React.FC<TitleBar> = ({editorInstance}) => {
                     <FileMenu />
                     <div style={{ width: '0.5rem' }}></div>
                     <EditMenu editorInstance={editorInstance} />
+                    <FilePath path={filePath ?? untitledName} />
                 </div>
                 {!vibrancy.vibrancy && (
                     <div className={styles.control}>
