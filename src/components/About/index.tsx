@@ -13,6 +13,7 @@ import styles from './about.module.scss';
 import icon from '../../assets/typability-icon.svg';
 import { useAsyncEffect } from 'ahooks';
 import { getVersion, getTauriVersion } from '@tauri-apps/api/app';
+import { open as openUrl } from '@tauri-apps/api/shell';
 import { FormattedMessage, useIntl } from 'react-intl';
 
 interface AboutProps {
@@ -80,7 +81,9 @@ const About: React.FC<AboutProps> = ({
                         </div>
                     </DialogContent>
                     <DialogActions>
-                        <Button appearance='secondary' disabled>
+                        <Button appearance='secondary' onClick={async () => {
+                            await openUrl('https://github.com/towerbit/Typability/releases');
+                        }}>
                             <FormattedMessage
                                 id="about.button.checkUpdate"
                                 defaultMessage="Check Update"
