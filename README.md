@@ -23,6 +23,7 @@ a WYSIWYG markdown editor based on [Milkdown](https://milkdown.dev/).
 - Only ask to save when the document was really modified, no matter if it's closing, opening, creating or dropping a file
 - `Save` is enabled only when there are changes, and `Save as` no longer shows a confirmation dialog on top of the system save dialog
 - Drop a markdown file onto the window to open it
+- A source code view (`Edit → Source code view`) to edit the raw markdown, every document opens in the WYSIWYG view
 - The current file name is shown in the title bar, the full path is available on hover
 - `Check Update` in the About dialog opens the GitHub releases page
 

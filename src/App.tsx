@@ -3,7 +3,7 @@ import styles from './App.module.scss';
 import TitleBar from "./components/TitleBar";
 import { useAtom } from "jotai";
 import { contentJotai, filePathJotai, openFileJotai, originalContentJotai, savedJotai, savingJotai } from "./jotais/file";
-import { aboutJotai, loadingJotai, preferenceJotai, toolbarJotai, twoColumnJotai, vibrancyJotai } from "./jotais/ui";
+import { aboutJotai, loadingJotai, preferenceJotai, sourceViewJotai, toolbarJotai, twoColumnJotai, vibrancyJotai } from "./jotais/ui";
 import classNames from "classnames";
 import { Spinner } from "@fluentui/react-components";
 import { useEffect, useRef } from "react";
@@ -19,6 +19,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { appWindow } from '@tauri-apps/api/window';
 import { TauriEvent } from '@tauri-apps/api/event';
 import FloatingToolbar from "./components/FloatingToolbar";
+import SourceEditor from "./components/SourceEditor";
 import { Editor } from "@milkdown/core";
 import { IntlProvider } from 'react-intl';
 import localeData from '../locale';
@@ -31,6 +32,7 @@ function App () {
     const [loading] = useAtom(loadingJotai);
     const [, setToolbar] = useAtom(toolbarJotai);
     const [twoColumn] = useAtom(twoColumnJotai);
+    const [sourceView] = useAtom(sourceViewJotai);
     const [saved, setSaved] = useAtom(savedJotai);
     const [, setOriginalContent] = useAtom(originalContentJotai);
     const [saving, setSaving] = useAtom(savingJotai);
@@ -145,7 +147,8 @@ function App () {
                 })}>
                     <TitleBar editorInstance={editorInstance} />
                     <div className={styles.editor} spellCheck={false}>
-                        <MilkdownEditor
+                        {sourceView && <SourceEditor />}
+                        {!sourceView && <MilkdownEditor
                             useMenu={false}
                             useSlash={settings.slash}
                             content={content}
@@ -161,7 +164,7 @@ function App () {
                             syntaxOption={settings.syntax}
                             theme={isDarkMode ? settings.themeDark : settings.theme}
                             ref={editorInstance}
-                        />
+                        />}
                     </div>
                     <div
                         data-tauri-drag-region

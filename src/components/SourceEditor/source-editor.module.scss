@@ -1,0 +1,19 @@
+.editor {
+    box-sizing: border-box;
+    width: 100%;
+    height: calc(100vh - 1rem - 40px);
+    margin: 0;
+    padding: 40px 20px;
+    border: none;
+    outline: none;
+    resize: none;
+    background: transparent;
+    color: var(--colorNeutralForeground1);
+    caret-color: var(--colorNeutralForeground1);
+    font-family: 'Cascadia Code', 'Consolas', 'Menlo', monospace;
+    font-size: 14px;
+    line-height: 1.6;
+    tab-size: 4;
+    white-space: pre-wrap;
+    overflow: auto;
+}

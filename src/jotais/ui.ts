@@ -19,3 +19,5 @@ interface VibrancyConfig {
 
 export const vibrancyJotai = atom<VibrancyConfig>(defaultVibrancyConfig);
 export const twoColumnJotai = atom<boolean>(false);
+/** Whether the editor shows the markdown source instead of the WYSIWYG view */
+export const sourceViewJotai = atom<boolean>(false);

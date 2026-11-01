@@ -13,6 +13,7 @@
     "menu.edit.addTable": "添加表格",
     "menu.edit.find": "查找",
     "menu.edit.replace": "替换",
+    "menu.edit.sourceView": "源代码视图",
     "menu.edit.title": "编辑",
     "menu.edit.twoColumnEditor": "双栏编辑器",
     "menu.file.about": "关于",

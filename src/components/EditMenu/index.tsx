@@ -2,7 +2,7 @@ import React from 'react';
 import { Menu, MenuButton, MenuDivider, MenuItem, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger } from '@fluentui/react-components';
 import { DocumentEdit16Regular } from '@fluentui/react-icons';
 import { useAtom } from 'jotai';
-import { editMenuJotai, toolbarJotai, twoColumnJotai } from '../../jotais/ui';
+import { editMenuJotai, sourceViewJotai, toolbarJotai, twoColumnJotai } from '../../jotais/ui';
 import { Editor, commandsCtx, editorViewCtx, parserCtx } from '@milkdown/core';
 import { FormattedMessage } from 'react-intl';
 import { InsertTable } from '@milkdown/preset-gfm';
@@ -29,11 +29,23 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
     const [settings] = useAtom(settingsJotai);
     const [, setEditMenu] = useAtom(editMenuJotai);
     const [twoColumn, setTwoColumn] = useAtom(twoColumnJotai);
+    const [sourceView, setSourceView] = useAtom(sourceViewJotai);
 
     return (
-        <Menu onOpenChange={(e, data) => {
-            setEditMenu(data.open);
-        }} hasCheckmarks>
+        <Menu
+            onOpenChange={(e, data) => {
+                setEditMenu(data.open);
+            }}
+            hasCheckmarks
+            checkedValues={{
+                twoColumnEditor: twoColumn ? ['twoColumn'] : [],
+                view: sourceView ? ['source'] : []
+            }}
+            onCheckedValueChange={(e, data) => {
+                if (data.name === 'twoColumnEditor') setTwoColumn(data.checkedItems.includes('twoColumn'));
+                if (data.name === 'view') setSourceView(data.checkedItems.includes('source'));
+            }}
+        >
             <MenuTrigger disableButtonEnhancement>
                 <MenuButton
                     size="small"
@@ -48,7 +60,7 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
             </MenuTrigger>
             <MenuPopover>
                 <MenuList>
-                    <MenuItem onClick={() => {
+                    <MenuItem disabled={sourceView} onClick={() => {
                         setFloatingToolbar('find');
                     }}>
                         <FormattedMessage
@@ -56,7 +68,7 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
                             defaultMessage='Find'
                         />
                     </MenuItem>
-                    <MenuItem onClick={() => {
+                    <MenuItem disabled={sourceView} onClick={() => {
                         setFloatingToolbar('replace');
                     }}>
                         <FormattedMessage
@@ -66,7 +78,7 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
                     </MenuItem>
                     <MenuDivider />
                     <MenuItem
-                        disabled={settings.syntax !== 'gfm'}
+                        disabled={sourceView || settings.syntax !== 'gfm'}
                         onClick={() => {
                             if (!editorInstance.current) return;
                             const commandManager = editorInstance.current.ctx.get(commandsCtx);
@@ -81,9 +93,6 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
                     <MenuItemCheckbox
                         name='twoColumnEditor'
                         value='twoColumn'
-                        onClick={() => {
-                            setTwoColumn(!twoColumn);
-                        }}
                     >
                         <FormattedMessage
                             id='menu.edit.twoColumnEditor'
@@ -124,6 +133,17 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
                             defaultMessage='Add formula'
                         />
                     </MenuItem>
+                    <MenuDivider />
+                    <MenuItemCheckbox
+                        name='view'
+                        value='source'
+                        persistOnClick={false}
+                    >
+                        <FormattedMessage
+                            id='menu.edit.sourceView'
+                            defaultMessage='Source code view'
+                        />
+                    </MenuItemCheckbox>
                 </MenuList>
             </MenuPopover>
         </Menu>

@@ -13,6 +13,7 @@
   "menu.edit.addTable": "Add table",
   "menu.edit.find": "Find",
   "menu.edit.replace": "Replace",
+  "menu.edit.sourceView": "Source code view",
   "menu.edit.title": "Edit",
   "menu.edit.twoColumnEditor": "Two-column Editor",
   "menu.file.about": "About",

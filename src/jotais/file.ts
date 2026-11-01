@@ -3,6 +3,7 @@ import { save as saveFilePicker } from '@tauri-apps/api/dialog';
 import { writeTextFile, readTextFile } from '@tauri-apps/api/fs';
 import { documentDir } from '@tauri-apps/api/path';
 import { settingsJotai } from "./settings";
+import { sourceViewJotai } from "./ui";
 import messages from '../../locale';
 import { confirm } from '@tauri-apps/api/dialog';
 
@@ -73,6 +74,9 @@ export const openFileJotai = atom(null, async (get, set, path: string | null) =>
 
         if (result) await set(savingJotai, true);
     }
+
+    // Every document is opened in the WYSIWYG view
+    set(sourceViewJotai, false);
 
     if (path === null) {
         untitledCount += 1;
