@@ -1,4 +1,4 @@
-import React, { forwardRef, useEffect } from 'react';
+import React, { forwardRef, useEffect, useRef } from 'react';
 import { Editor, rootCtx, defaultValueCtx, commandsCtx, EditorStatus } from '@milkdown/core';
 import { nord, nordDark } from '@milkdown/theme-nord';
 import { ReactEditor, useEditor } from '@milkdown/react';
@@ -31,6 +31,8 @@ interface MilkdownEditor {
     syntaxOption?: keyof typeof syntaxMap;
     theme?: keyof typeof themeMap;
     onMarkdownUpdated?: (markdown: string, prevMarkdown: string | null) => void;
+    /** Called with the editor's markdown after the content was replaced programmatically(e.g. opening a file) */
+    onContentLoaded?: (markdown: string) => void;
     ref?: React.LegacyRef<Editor>;
 }
 
@@ -51,6 +53,11 @@ const themeMap = {
 
 let currentContent = '';
 let currentTheme = '';
+/*
+ * Set while the content is being replaced programmatically, so that the
+ * resulting markdown update isn't reported as a user modification.
+ */
+let pendingReplace = false;
 
 const MilkdownEditor: React.FC<MilkdownEditor> = forwardRef<Editor, MilkdownEditor>(({
     content,
@@ -59,8 +66,14 @@ const MilkdownEditor: React.FC<MilkdownEditor> = forwardRef<Editor, MilkdownEdit
     syntaxOption = 'gfm',
     theme = 'nord',
     onMarkdownUpdated,
+    onContentLoaded,
     twoColumnEditor = false
 }, ref) => {
+    // Keep the latest callbacks, the editor is created only once
+    const callbacks = useRef({ onMarkdownUpdated, onContentLoaded });
+    useEffect(() => {
+        callbacks.current = { onMarkdownUpdated, onContentLoaded };
+    });
     useEffect(() => {
         if (ref) {
             if (typeof ref === 'function') ref(getInstance() ?? null);
@@ -83,7 +96,13 @@ const MilkdownEditor: React.FC<MilkdownEditor> = forwardRef<Editor, MilkdownEdit
         if (!loading) {
             const instance = getInstance();
             if (content !== currentContent) {
+                /*
+                 * Milkdown's replaceAll dispatches synchronously, so the markdown update
+                 * it causes is the only one reported while this flag is set.
+                 */
+                pendingReplace = true;
                 instance?.action(replaceAll(content));
+                pendingReplace = false;
                 currentContent = content;
             }
             if (theme !== currentTheme) {
@@ -101,14 +120,19 @@ const MilkdownEditor: React.FC<MilkdownEditor> = forwardRef<Editor, MilkdownEdit
                 ctx.set(defaultValueCtx, content);
                 ctx.set(rootCtx, root);
                 const listener = ctx.get(listenerCtx);
-                if (onMarkdownUpdated) {
-                    listener.markdownUpdated((ctx, markdown, prevMarkdown) => {
-                        if (markdown === prevMarkdown) return;
-                        // Don't trigger when editor is initializing
-                        if (prevMarkdown !== null) onMarkdownUpdated(markdown, prevMarkdown);
+                listener.markdownUpdated((ctx, markdown, prevMarkdown) => {
+                    if (markdown === prevMarkdown) return;
+                    // Content was replaced by us(open a file, etc.), so it's not a user modification
+                    if (pendingReplace) {
+                        pendingReplace = false;
                         currentContent = markdown;
-                    });
-                }
+                        callbacks.current.onContentLoaded?.(markdown);
+                        return;
+                    }
+                    // Don't trigger when editor is initializing
+                    if (prevMarkdown !== null) callbacks.current.onMarkdownUpdated?.(markdown, prevMarkdown);
+                    currentContent = markdown;
+                });
 
             }).use(syntaxMap[syntaxOption])
             .use(listener)

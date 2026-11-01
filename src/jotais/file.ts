@@ -38,11 +38,13 @@ export const filePathJotai = atom(null, async (get, set, value: string | null) =
         try {
             const textContent = await readTextFile(value);
             set(contentJotai, textContent);
+            set(originalContentJotai, textContent);
         } catch (e) {
             alert(`Error occurred while opening file:\n${(e as Error).message}`);
         }
     } else {
         set(contentJotai, '');
+        set(originalContentJotai, '');
     }
     set(savedJotai, true);
 });
@@ -72,13 +74,14 @@ export const savingJotai = atom(false, async (get, set, value: boolean) => {
     try {
         await writeTextFile({ path, contents: get(contentJotai) });
         set(savedJotai, true);
+        set(originalContentJotai, get(contentJotai));
     } catch (e) {
         alert(`Error occurred while saving file:\n${(e as Error).message}`);
     }
     set(savingJotai, false);
 });
 
-export const contentJotai = atom(`
+const defaultContent = `
 # 🗒️ Typability
 > **Typability** is a WYSIWYG markdown editor based on [Milkdown](https://milkdown.dev/).
 > Here is the [repo](https://github.com/SimonShiki/typability)
@@ -86,9 +89,20 @@ export const contentJotai = atom(`
     *   [x] 📝 **WYSIWYG Markdown**
     *   [x] 🎨 **Fluent Design**
     *   [x] 🚀 **Lightweight**
-`, (get, set, value: string) => {
+`;
+
+/**
+ * Content of the file as it was when opened or last saved.
+ * Used to tell whether the document was really modified by the user.
+ */
+export const originalContentJotai = atom(defaultContent);
+
+export const contentJotai = atom(defaultContent, (get, set, value: string) => {
     if (value.trim() !== get(contentJotai).trim()) {
         set(contentJotai, value);
         set(savedJotai, false);
     }
 });
+
+/** Whether the content differs from the state it was opened/last saved with. */
+export const dirtyJotai = atom((get) => get(contentJotai).trim() !== get(originalContentJotai).trim());

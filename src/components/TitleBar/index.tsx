@@ -8,14 +8,13 @@ import EditMenu from '../EditMenu';
 import { useAtom } from 'jotai';
 import { aboutJotai, preferenceJotai, vibrancyJotai } from '../../jotais/ui';
 import { Editor } from '@milkdown/core';
-import { savedJotai, savingJotai } from '../../jotais/file';
+import { dirtyJotai, savingJotai } from '../../jotais/file';
 import { useIntl } from 'react-intl';
 import { TauriEvent } from '@tauri-apps/api/event';
 import { confirm } from '@tauri-apps/api/dialog';
-import { useUpdateEffect } from 'ahooks';
 import classNames from 'classnames';
 
-let globalSaved = savedJotai.init;
+let globalDirty = false;
 interface TitleBar {
     editorInstance: {
         current?: Editor | null;
@@ -25,7 +24,7 @@ interface TitleBar {
 const TitleBar : React.FC<TitleBar> = ({editorInstance}) => {
     const [preference] = useAtom(preferenceJotai);
     const [about] = useAtom(aboutJotai);
-    const [saved] = useAtom(savedJotai);
+    const [dirty] = useAtom(dirtyJotai);
     const [vibrancy] = useAtom(vibrancyJotai);
     const [, setSaving] = useAtom(savingJotai);
     const titleBarRef = useRef<HTMLDivElement>(null);
@@ -33,17 +32,18 @@ const TitleBar : React.FC<TitleBar> = ({editorInstance}) => {
     const disableMenu = (e: MouseEvent) => {
         e.preventDefault();
     };
-    useUpdateEffect(() => {
-        globalSaved = saved;
-    }, [saved]);
+    useEffect(() => {
+        globalDirty = dirty;
+    }, [dirty]);
     useEffect(() => {
         if (!titleBarRef.current) return;
         titleBarRef.current.addEventListener('contextmenu', disableMenu);
 
         // Listen close event
         appWindow.listen(TauriEvent.WINDOW_CLOSE_REQUESTED, async () => {
-            
-            if (!globalSaved) {
+
+            // Only ask when the content differs from the file it was opened with
+            if (globalDirty) {
                 const result = await confirm(intl.formatMessage({
                     id: 'closeDialog.title',
                     defaultMessage: 'Do you need to save and then exit?'

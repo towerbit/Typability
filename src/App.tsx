@@ -2,7 +2,7 @@ import MilkdownEditor from "./components/MilkdownEditor";
 import styles from './App.module.scss';
 import TitleBar from "./components/TitleBar";
 import { useAtom } from "jotai";
-import { contentJotai, filePathJotai, savedJotai, savingJotai } from "./jotais/file";
+import { contentJotai, filePathJotai, originalContentJotai, savedJotai, savingJotai } from "./jotais/file";
 import { aboutJotai, loadingJotai, preferenceJotai, toolbarJotai, twoColumnJotai, vibrancyJotai } from "./jotais/ui";
 import classNames from "classnames";
 import { Spinner } from "@fluentui/react-components";
@@ -28,7 +28,8 @@ function App () {
     const [loading] = useAtom(loadingJotai);
     const [, setToolbar] = useAtom(toolbarJotai);
     const [twoColumn] = useAtom(twoColumnJotai);
-    const [saved] = useAtom(savedJotai);
+    const [saved, setSaved] = useAtom(savedJotai);
+    const [, setOriginalContent] = useAtom(originalContentJotai);
     const [saving, setSaving] = useAtom(savingJotai);
     const [settings] = useAtom(settingsJotai);
     const [preference, setPreference] = useAtom(preferenceJotai);
@@ -127,6 +128,11 @@ function App () {
                             content={content}
                             onMarkdownUpdated={(markdown) => {
                                 setContent(markdown);
+                            }}
+                            onContentLoaded={(markdown) => {
+                                setOriginalContent(markdown);
+                                setContent(markdown);
+                                setSaved(true);
                             }}
                             twoColumnEditor={twoColumn}
                             syntaxOption={settings.syntax}
