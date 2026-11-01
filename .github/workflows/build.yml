@@ -30,6 +30,12 @@ jobs:
         run: |
           sudo apt-get update
           sudo apt-get install -y libgtk-3-dev libwebkit2gtk-4.0-dev libappindicator3-dev librsvg2-dev patchelf
+      - name: read app version
+        id: version
+        shell: bash
+        run: |
+          version=$(node -p "require('./package.json').version")
+          echo "value=$version" >> "$GITHUB_OUTPUT"
       - name: check that the tag matches the app version
         if: startsWith(github.ref, 'refs/tags/')
         run: |
@@ -45,3 +51,15 @@ jobs:
           releaseBody: 'Changes: see the "What is new" section in README.md'
           releaseDraft: false
           prerelease: false
+      - name: zip the portable executable (windows only)
+        if: matrix.platform == 'windows-latest'
+        shell: pwsh
+        run: |
+          Compress-Archive -Path src-tauri/target/release/typability.exe -DestinationPath "Typability_${{ steps.version.outputs.value }}_x64_windows.zip"
+      - name: upload the portable executable (windows only)
+        if: matrix.platform == 'windows-latest'
+        shell: bash
+        env:
+          GH_TOKEN: ${{ secrets.GITHUB_TOKEN }}
+        run: |
+          gh release upload "v${{ steps.version.outputs.value }}" "Typability_${{ steps.version.outputs.value }}_x64_windows.zip" --clobber
