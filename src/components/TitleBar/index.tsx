@@ -5,7 +5,7 @@ import styles from './title-bar.module.scss';
 import { Add20Regular, ArrowDown20Regular, FullScreenMaximize20Regular } from '@fluentui/react-icons';
 import FileMenu from '../FileMenu';
 import EditMenu from '../EditMenu';
-import { useAtom } from 'jotai';
+import { getDefaultStore, useAtom } from 'jotai';
 import { aboutJotai, preferenceJotai, vibrancyJotai } from '../../jotais/ui';
 import { Editor } from '@milkdown/core';
 import { dirtyJotai, savingJotai } from '../../jotais/file';
@@ -14,7 +14,6 @@ import { TauriEvent } from '@tauri-apps/api/event';
 import { confirm } from '@tauri-apps/api/dialog';
 import classNames from 'classnames';
 
-let globalDirty = false;
 interface TitleBar {
     editorInstance: {
         current?: Editor | null;
@@ -24,7 +23,6 @@ interface TitleBar {
 const TitleBar : React.FC<TitleBar> = ({editorInstance}) => {
     const [preference] = useAtom(preferenceJotai);
     const [about] = useAtom(aboutJotai);
-    const [dirty] = useAtom(dirtyJotai);
     const [vibrancy] = useAtom(vibrancyJotai);
     const [, setSaving] = useAtom(savingJotai);
     const titleBarRef = useRef<HTMLDivElement>(null);
@@ -33,9 +31,6 @@ const TitleBar : React.FC<TitleBar> = ({editorInstance}) => {
         e.preventDefault();
     };
     useEffect(() => {
-        globalDirty = dirty;
-    }, [dirty]);
-    useEffect(() => {
         if (!titleBarRef.current) return;
         titleBarRef.current.addEventListener('contextmenu', disableMenu);
 
@@ -43,7 +38,7 @@ const TitleBar : React.FC<TitleBar> = ({editorInstance}) => {
         appWindow.listen(TauriEvent.WINDOW_CLOSE_REQUESTED, async () => {
 
             // Only ask when the content differs from the file it was opened with
-            if (globalDirty) {
+            if (getDefaultStore().get(dirtyJotai)) {
                 const result = await confirm(intl.formatMessage({
                     id: 'closeDialog.title',
                     defaultMessage: 'Do you need to save and then exit?'
@@ -55,7 +50,11 @@ const TitleBar : React.FC<TitleBar> = ({editorInstance}) => {
                     type: 'warning'
                 });
 
-                if (result) await setSaving(true);
+                if (!result) return;
+
+                await setSaving(true);
+                // Keep the window open when saving was cancelled
+                if (getDefaultStore().get(dirtyJotai)) return;
             }
             await appWindow.close();
         });
