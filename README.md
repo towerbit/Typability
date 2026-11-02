@@ -18,6 +18,10 @@ a WYSIWYG markdown editor based on [Milkdown](https://milkdown.dev/).
 - [x] 📝 **WYSIWYG Markdown - provides Typora-like seamless Markdown editing experience**
 # 📝 What's new
 
+## 0.6.3
+- Find/replace matches are highlighted in the editor, the current match is emphasized; match positions in nested blocks(e.g. list items) are fixed
+- The search box gets the focus automatically when the find/replace toolbar opens
+
 ## 0.6.2
 - The link editing chip is wider and gets an `OPEN` button that opens the link with the default browser
 
