@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { Editor, rootCtx, defaultValueCtx, commandsCtx, EditorStatus } from '@milkdown/core';
+import { Editor, rootCtx, defaultValueCtx, commandsCtx, editorViewCtx, EditorStatus } from '@milkdown/core';
 import { nord, nordDark } from '@milkdown/theme-nord';
 import { ReactEditor, useEditor } from '@milkdown/react';
 import { commonmark, heading as commonmarkHeading } from '@milkdown/preset-commonmark';
@@ -22,6 +22,7 @@ import { math } from '@milkdown/plugin-math';
 import { cursor } from '@milkdown/plugin-cursor';
 import 'katex/dist/katex.min.css';
 import { splitEditing, ToggleSplitEditing } from '@milkdown-lab/plugin-split-editing';
+import enhanceLinkTooltip from '../../utils/linkTooltip';
 
 interface MilkdownEditor {
     content: string;
@@ -154,6 +155,19 @@ const MilkdownEditor: React.FC<MilkdownEditor> = forwardRef<Editor, MilkdownEdit
 
         return instance;
     });
+
+    // Widen the link chip and add an "OPEN" button to it
+    useEffect(() => {
+        if (loading) return;
+
+        const instance = getInstance();
+        if (!instance) return;
+
+        const container = instance.ctx.get(editorViewCtx).dom.parentElement;
+        if (!container) return;
+
+        return enhanceLinkTooltip(container);
+    }, [loading]);
 
     return <ReactEditor editor={editor} />;
 });
