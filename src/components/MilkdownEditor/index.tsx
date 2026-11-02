@@ -1,5 +1,5 @@
 import React, { forwardRef, useEffect, useRef } from 'react';
-import { Editor, rootCtx, defaultValueCtx, commandsCtx, editorViewCtx, EditorStatus } from '@milkdown/core';
+import { Editor, rootCtx, defaultValueCtx, commandsCtx, editorViewCtx, prosePluginsCtx, EditorStatus } from '@milkdown/core';
 import { nord, nordDark } from '@milkdown/theme-nord';
 import { ReactEditor, useEditor } from '@milkdown/react';
 import { commonmark, heading as commonmarkHeading } from '@milkdown/preset-commonmark';
@@ -23,6 +23,7 @@ import { cursor } from '@milkdown/plugin-cursor';
 import 'katex/dist/katex.min.css';
 import { splitEditing, ToggleSplitEditing } from '@milkdown-lab/plugin-split-editing';
 import enhanceLinkTooltip from '../../utils/linkTooltip';
+import { findHighlightPlugin } from '../../utils/findHighlight';
 
 interface MilkdownEditor {
     content: string;
@@ -120,6 +121,7 @@ const MilkdownEditor: React.FC<MilkdownEditor> = forwardRef<Editor, MilkdownEdit
             .config((ctx) => {
                 ctx.set(defaultValueCtx, content);
                 ctx.set(rootCtx, root);
+                ctx.update(prosePluginsCtx, (plugins) => plugins.concat(findHighlightPlugin));
                 const listener = ctx.get(listenerCtx);
                 listener.markdownUpdated((ctx, markdown, prevMarkdown) => {
                     if (markdown === prevMarkdown) return;

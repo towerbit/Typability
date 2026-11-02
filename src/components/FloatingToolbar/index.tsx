@@ -8,6 +8,7 @@ import { Add20Regular, ArrowDown24Regular, ArrowUp24Regular, Search24Regular, Te
 import { useKeyPress, useUpdateEffect } from 'ahooks';
 import { Editor, editorViewCtx, parserCtx } from '@milkdown/core';
 import { Finder } from '../../utils/findAndReplace';
+import { clearFindHighlights, highlightMatches } from '../../utils/findHighlight';
 import { contentJotai } from '../../jotais/file';
 import { Selection, TextSelection } from '@milkdown/prose/state';
 import { Slice } from '@milkdown/prose/model';
@@ -52,12 +53,24 @@ const FloatingToolbar: React.FC<FloatingToolbar> = ({
     };
     const selectByPos = (scroll = true) => {
         if (!editorInstance.current) return;
-        if (result.length === 0) return;
         const editorView = editorInstance.current.ctx.get(editorViewCtx);
+
+        if (result.length === 0) {
+            clearFindHighlights(editorView);
+            return;
+        }
+
         const transaction = editorView.state.tr;
         const selection = result[pos - 1];
         const currentTransaction = transaction.setSelection(selection);
         editorView.dispatch(scroll ? currentTransaction.scrollIntoView() : currentTransaction);
+
+        // The selection isn't painted while the find input has the focus, highlight instead
+        highlightMatches(
+            editorView,
+            result.map((matched) => ({ from: matched.from, to: matched.to })),
+            Math.min(Math.max(pos - 1, 0), result.length - 1)
+        );
     };
     const handleReplace = () => {
         if (!editorInstance.current || result.length === 0) return;
@@ -125,6 +138,10 @@ const FloatingToolbar: React.FC<FloatingToolbar> = ({
     useUpdateEffect(() => {
         selectByPos();
     }, [pos, result]);
+    useUpdateEffect(() => {
+        if (status || !editorInstance.current) return;
+        clearFindHighlights(editorInstance.current.ctx.get(editorViewCtx));
+    }, [status]);
     useUpdateEffect(() => {
         if (status && find !== '' && result.length !== 0) {
             handleSearch();
