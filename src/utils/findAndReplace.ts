@@ -1,10 +1,4 @@
 import { TextSelection, Transaction } from '@milkdown/prose/state';
-import { Node } from '@milkdown/prose/model';
-
-type EndPoint = {
-    from: number;
-    to: number;
-};
 
 function makeSafeRegExpStr (str: string) {
     const modifiedStr = str.split('');
@@ -36,54 +30,29 @@ export class Finder {
      */
     find (findStr: string) {
         const { doc } = this.tr;
-        const range = this.findInNode(doc, findStr);
-        return range;
-    }
+        const pattern = new RegExp(makeSafeRegExpStr(findStr), this.caseSensitive ? '' : 'i');
+        const ret: TextSelection[] = [];
 
-    // Referenced from the https://github.com/mattberkowitz/prosemirror-find-replace implementation
-    private getNodeEndpoints (context: Node, node: Node): EndPoint | null {
-        let offset = 0;
+        /*
+         * Walk the document to get the real position of every text block, the text of a
+         * block starts right after the block position(node positions are 1-based offsets).
+         */
+        doc.descendants((node, pos) => {
+            if (!node.isTextblock) return true;
 
-        if (context === node) {
-            return {
-                from: offset,
-                to: offset + node.nodeSize
-            };
-        }
-
-        if (node.isBlock) {
-            for (let i = 0; i < context.content.childCount; i++) {
-                // Use method that exists in type declaration to get node endpoints to avoid issues
-                const result = this.getNodeEndpoints(context.content.child(i), node);
-                if (result) return {
-                    // There's a offset in original code snippet, but there isn't exist in type declaration.
-                    from: result.from + offset/* + (context.type.kind === null ? 0 : 1)*/,
-                    to: result.to + offset/* + (context.type.kind === null ? 0 : 1)*/
-                };
-                offset += context.content.child(i).nodeSize;
-            }
-            return null;
-        } 
-        return null;
-        
-    }
-
-    // Referenced from the https://github.com/mattberkowitz/prosemirror-find-replace implementation
-    private findInNode (node: Node, findStr: string) {
-        let ret: TextSelection[] = [];
-
-        if (node.isTextblock) {
-            let index = 0, foundAt;
-            const ep = this.getNodeEndpoints(this.tr.doc, node);
-            if (ep === null) return;
-            while ((foundAt = node.textContent.slice(index).search(new RegExp(makeSafeRegExpStr(findStr), this.caseSensitive ? '' : 'i'))) > -1) {
-                const sel = TextSelection.create(this.tr.doc, ep.from + index + foundAt + 1, ep.from + index + foundAt + findStr.length + 1);
-                ret.push(sel);
+            const text = node.textContent;
+            let index = 0;
+            let foundAt: number;
+            while ((foundAt = text.slice(index).search(pattern)) > -1) {
+                const from = pos + 1 + index + foundAt;
+                ret.push(TextSelection.create(doc, from, from + findStr.length));
                 index = index + foundAt + findStr.length;
             }
-        } else {
-            node.content.forEach((child) => ret = ret.concat(this.findInNode(child, findStr) ?? []));
-        }
+
+            // Text blocks can't be nested, no need to walk into them
+            return false;
+        });
+
         return ret;
     }
 }
