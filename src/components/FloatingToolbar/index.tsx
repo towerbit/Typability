@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import React, { useRef, useState } from 'react';
 import styles from './floating-toolbar.module.scss';
 import { useAtom } from 'jotai';
 import { toolbarJotai } from '../../jotais/ui';
@@ -30,6 +30,7 @@ const FloatingToolbar: React.FC<FloatingToolbar> = ({
     const [cs, setCs] = useState(false);
     const [result, setResult] = useState<Selection[]>([]); // Matched selections
     const [pos, setPos] = useState(0); // Position of result
+    const inputAreaRef = useRef<HTMLDivElement>(null);
     const intl = useIntl();
     const handleSearch = (originalPos?: number) => {
         if (!editorInstance.current) return;
@@ -142,6 +143,15 @@ const FloatingToolbar: React.FC<FloatingToolbar> = ({
         if (status || !editorInstance.current) return;
         clearFindHighlights(editorInstance.current.ctx.get(editorViewCtx));
     }, [status]);
+    // Focus the search box whenever the toolbar shows up
+    useUpdateEffect(() => {
+        if (!status) return;
+        inputAreaRef.current?.querySelector('input')?.focus();
+    }, [status]);
+    useKeyPress('ctrl.f', (event) => {
+        event.preventDefault();
+        inputAreaRef.current?.querySelector('input')?.focus();
+    });
     useUpdateEffect(() => {
         if (status && find !== '' && result.length !== 0) {
             handleSearch();
@@ -158,7 +168,7 @@ const FloatingToolbar: React.FC<FloatingToolbar> = ({
                 })}
             >
                 <Toolbar>
-                    <div className={styles.input}>
+                    <div className={styles.input} ref={inputAreaRef}>
                         <Input
                             placeholder={intl.formatMessage({
                                 id: 'toolbar.find.placeholder',
