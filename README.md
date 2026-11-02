@@ -18,6 +18,9 @@ a WYSIWYG markdown editor based on [Milkdown](https://milkdown.dev/).
 - [x] 📝 **WYSIWYG Markdown - provides Typora-like seamless Markdown editing experience**
 # 📝 What's new
 
+## 0.6.2
+- The link editing chip is wider and gets an `OPEN` button that opens the link with the default browser
+
 ## 0.6.1
 - `Two-column Editor` is now right above `Source code view`; the two views are mutually exclusive and both are unchecked when a document is opened or created
 
