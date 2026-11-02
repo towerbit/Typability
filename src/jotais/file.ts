@@ -124,7 +124,7 @@ export const saveAsJotai = atom(null, async (get, set) => {
 const defaultContent = `
 # 🗒️ Typability
 > **Typability** is a WYSIWYG markdown editor based on [Milkdown](https://milkdown.dev/).
-> Here is the [repo](https://github.com/SimonShiki/typability)
+> Here is the [repo](https://github.com/towerbit/Typability)
 *   Features
     *   [x] 📝 **WYSIWYG Markdown**
     *   [x] 🎨 **Fluent Design**
