@@ -3,6 +3,7 @@
     windows_subsystem = "windows"
 )]
 
+mod cache;
 mod pdf;
 mod setup;
 
@@ -16,7 +17,7 @@ fn main() {
                 setup::save_window_state_on_close(event.window());
             }
         })
-        .invoke_handler(tauri::generate_handler![setup::get_args, setup::apply_mica, setup::clear_mica, setup::apply_arcylic, setup::clear_arcylic, setup::apply_tabbed, setup::clear_tabbed, setup::save_window_state, setup::load_settings, setup::save_settings, pdf::export_pdf])
+        .invoke_handler(tauri::generate_handler![setup::get_args, setup::apply_mica, setup::clear_mica, setup::apply_arcylic, setup::clear_arcylic, setup::apply_tabbed, setup::clear_tabbed, setup::save_window_state, setup::load_settings, setup::save_settings, pdf::export_pdf, cache::clear_webview_cache])
         .run(tauri::generate_context!())
         .expect("error while running tauri application");
 }

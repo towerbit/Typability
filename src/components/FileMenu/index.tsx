@@ -4,6 +4,7 @@ import { Folder16Regular } from '@fluentui/react-icons';
 import { useAtom } from 'jotai';
 import  { open as openFilePicker, save as saveFilePicker } from '@tauri-apps/api/dialog';
 import { basename, dirname, documentDir, join } from '@tauri-apps/api/path';
+import { invoke } from '@tauri-apps/api/tauri';
 import { contentJotai, dirtyJotai, filePathJotai, openFileJotai, saveAsJotai, savingJotai } from '../../jotais/file';
 import { aboutJotai, preferenceJotai, toastJotai } from '../../jotais/ui';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -169,6 +170,37 @@ const FileMenu: React.FC = () => {
                         <FormattedMessage
                             id='menu.file.preference'
                             defaultMessage='Preference'
+                        />
+                    </MenuItem>
+                    <MenuItem onClick={async () => {
+                        try {
+                            const size = await invoke<number>('clear_webview_cache');
+                            setToast({
+                                id: Date.now(),
+                                kind: 'success',
+                                text: intl.formatMessage({
+                                    id: 'menu.file.clearCache.success',
+                                    defaultMessage: 'Cache cleared ({size})'
+                                }, {
+                                    size: size >= 1024 * 1024
+                                        ? `${(size / 1024 / 1024).toFixed(1)} MB`
+                                        : `${(size / 1024).toFixed(1)} KB`
+                                })
+                            });
+                        } catch (error) {
+                            setToast({
+                                id: Date.now(),
+                                kind: 'error',
+                                text: intl.formatMessage({
+                                    id: 'menu.file.clearCache.failure',
+                                    defaultMessage: 'Failed to clear cache: {reason}'
+                                }, { reason: String(error) })
+                            });
+                        }
+                    }}>
+                        <FormattedMessage
+                            id='menu.file.clearCache'
+                            defaultMessage='Clear Cache'
                         />
                     </MenuItem>
                     <MenuItem onClick={() => {

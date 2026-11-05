@@ -18,6 +18,10 @@ a WYSIWYG markdown editor based on [Milkdown](https://milkdown.dev/).
 - [x] 📝 **WYSIWYG Markdown - provides Typora-like seamless Markdown editing experience**
 # 📝 What's new
 
+## 0.6.9
+- Fixed the startup flash that briefly showed the two-column layout before switching to the WYSIWYG or remembered view; the first paint now shows the correct view
+- Added "Clear Cache" to the file menu, with a toast reporting the result (clears WebView2 browsing data on Windows)
+
 ## 0.6.8
 - New "Remember current view" preference: keeps the two-column, source code and outline toggles across restarts and when opening documents
 - All preferences and the window geometry now live in a single `settings.json` in the app config directory; the old localStorage and `window-state.json` values are migrated automatically

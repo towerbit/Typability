@@ -5,6 +5,7 @@ import App from "./App";
 import "./style.scss";
 import "./themes/typora.css";
 import { defaultSettings, settingsJotai } from "./jotais/settings";
+import { outlineJotai, sourceViewJotai, twoColumnJotai } from "./jotais/ui";
 
 /*
  * Load the settings from the rust side before rendering anything. The first
@@ -21,7 +22,18 @@ async function bootstrap () {
             delete parsed.windowState;
 
             const merged = { ...defaultSettings, ...parsed };
-            getDefaultStore().set(settingsJotai, merged);
+            const store = getDefaultStore();
+            store.set(settingsJotai, merged);
+            /*
+             * Seed the view atoms before the first render. useRememberView
+             * restores them in an effect, which would otherwise paint the
+             * default view first and flash to the remembered one on startup.
+             */
+            if (merged.rememberView) {
+                store.set(twoColumnJotai, merged.viewTwoColumn);
+                store.set(sourceViewJotai, merged.viewSource);
+                store.set(outlineJotai, merged.viewOutline);
+            }
             await invoke('save_settings', { settings: JSON.stringify(merged) });
         }
 

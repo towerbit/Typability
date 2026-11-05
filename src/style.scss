@@ -55,3 +55,16 @@ body {
 .find-match-current {
     background-color: rgba(255, 163, 26, 0.75);
 }
+
+/*
+ * The split-editing plugin creates its source pane visible and only hides it
+ * in an effect after the editor mounts. Without this rule the first paint shows
+ * the two-column layout and then flashes to the requested view on startup.
+ */
+[data-split-hidden='true'] .milkdown-split-editing-wrapper .milkdown-split-editor {
+    display: none;
+}
+
+[data-split-hidden='true'] .milkdown-split-editing-wrapper > div {
+    width: 100%;
+}

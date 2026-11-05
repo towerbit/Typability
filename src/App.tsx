@@ -165,7 +165,7 @@ function App () {
                             editorInstance={editorInstance}
                             onJumpSource={(offset) => sourceEditorRef.current?.scrollToOffset(offset)}
                         />}
-                        <div className={styles.editor} spellCheck={false}>
+                        <div className={styles.editor} data-split-hidden={!twoColumn} spellCheck={false}>
                             {sourceView && <SourceEditor ref={sourceEditorRef} />}
                             {!sourceView && <MilkdownEditor
                                 useMenu={false}
