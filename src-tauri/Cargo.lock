@@ -3171,10 +3171,15 @@ name = "typability"
 version = "0.6.5"
 dependencies = [
  "base64 0.21.7",
+ "block",
+ "cocoa 0.24.1",
+ "gtk",
+ "objc",
  "serde",
  "serde_json",
  "tauri",
  "tauri-build",
+ "webkit2gtk",
  "webview2-com",
  "window-shadows",
  "window-vibrancy",

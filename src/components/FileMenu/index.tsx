@@ -5,8 +5,8 @@ import { useAtom } from 'jotai';
 import  { open as openFilePicker, save as saveFilePicker } from '@tauri-apps/api/dialog';
 import { documentDir } from '@tauri-apps/api/path';
 import { contentJotai, dirtyJotai, filePathJotai, openFileJotai, saveAsJotai, savingJotai } from '../../jotais/file';
-import { aboutJotai, preferenceJotai } from '../../jotais/ui';
-import { FormattedMessage } from 'react-intl';
+import { aboutJotai, preferenceJotai, toastJotai } from '../../jotais/ui';
+import { FormattedMessage, useIntl } from 'react-intl';
 import { exportAsDocx, exportAsHtml, exportAsPdf } from '../../utils/export';
 
 const availbleExts = [{
@@ -33,6 +33,8 @@ const FileMenu: React.FC = () => {
     const [filePath] = useAtom(filePathJotai);
     const [dirty] = useAtom(dirtyJotai);
     const [, setPreference] = useAtom(preferenceJotai);
+    const [, setToast] = useAtom(toastJotai);
+    const intl = useIntl();
     const [, setAbout] = useAtom(aboutJotai);
     const [, setSaving] = useAtom(savingJotai);
     const [, openFile] = useAtom(openFileJotai);
@@ -104,17 +106,39 @@ const FileMenu: React.FC = () => {
                         const index = selected.lastIndexOf('.');
                         if (index === -1) return;
                         const ext = selected.substring(index + 1).toLowerCase();
-                        switch (ext) {
-                        case 'htm':
-                        case 'html':
-                            await exportAsHtml(selected as string, content);
-                            break;
-                        case 'pdf':
-                            await exportAsPdf(selected as string, content);
-                            break;
-                        case 'docx':
-                            await exportAsDocx(selected as string, content);
-                            break;
+                        try {
+                            switch (ext) {
+                            case 'htm':
+                            case 'html':
+                                await exportAsHtml(selected as string, content);
+                                break;
+                            case 'pdf':
+                                await exportAsPdf(selected as string, content);
+                                break;
+                            case 'docx':
+                                await exportAsDocx(selected as string, content);
+                                break;
+                            default:
+                                throw new Error(`unsupported format: ${ext}`);
+                            }
+
+                            setToast({
+                                id: Date.now(),
+                                kind: 'success',
+                                text: intl.formatMessage({
+                                    id: 'menu.file.export.success',
+                                    defaultMessage: 'Exported to {path}'
+                                }, { path: selected })
+                            });
+                        } catch (error) {
+                            setToast({
+                                id: Date.now(),
+                                kind: 'error',
+                                text: intl.formatMessage({
+                                    id: 'menu.file.export.failure',
+                                    defaultMessage: 'Export failed: {reason}'
+                                }, { reason: String(error) })
+                            });
                         }
                     }}>
                         <FormattedMessage

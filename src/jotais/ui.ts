@@ -23,3 +23,12 @@ export const twoColumnJotai = atom<boolean>(false);
 export const sourceViewJotai = atom<boolean>(false);
 /** Whether the outline sidebar is shown */
 export const outlineJotai = atom<boolean>(false);
+
+export interface ToastState {
+    id: number;
+    text: string;
+    kind: 'success' | 'error';
+}
+
+/** Transient message shown after actions such as exporting */
+export const toastJotai = atom<ToastState | null>(null);

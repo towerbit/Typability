@@ -1,0 +1,25 @@
+.wrapper {
+    position: fixed;
+    right: 16px;
+    bottom: 16px;
+    z-index: 100000;
+    max-width: min(440px, calc(100vw - 32px));
+    pointer-events: none;
+}
+
+.toast {
+    padding: 12px 16px;
+    border-radius: 6px;
+    background-color: var(--colorNeutralBackground1);
+    color: var(--colorNeutralForeground1);
+    border: 1px solid var(--colorNeutralStroke2);
+    border-left: 3px solid var(--colorPaletteGreenBorder1);
+    box-shadow: var(--shadow16);
+    font-size: 13px;
+    line-height: 1.5;
+    word-break: break-all;
+}
+
+.error {
+    border-left-color: var(--colorPaletteRedBorder1);
+}

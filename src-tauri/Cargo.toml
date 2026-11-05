@@ -25,6 +25,15 @@ webview2-com = "0.19"
 windows = "0.39"
 base64 = "0.21"
 
+[target.'cfg(target_os = "macos")'.dependencies]
+objc = "0.2"
+block = "0.1"
+cocoa = "0.24"
+
+[target.'cfg(any(target_os = "linux", target_os = "dragonfly", target_os = "freebsd", target_os = "openbsd", target_os = "netbsd"))'.dependencies]
+gtk = "0.15"
+webkit2gtk = { version = "0.18.2", features = ["v2_22"] }
+
 [features]
 # by default Tauri runs in production mode
 # when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL

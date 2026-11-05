@@ -21,6 +21,7 @@ import { TauriEvent } from '@tauri-apps/api/event';
 import FloatingToolbar from "./components/FloatingToolbar";
 import SourceEditor, { SourceEditorHandle } from "./components/SourceEditor";
 import Outline from "./components/Outline";
+import Toast from "./components/Toast";
 import { Editor } from "@milkdown/core";
 import { IntlProvider } from 'react-intl';
 import localeData from '../locale';
@@ -189,6 +190,7 @@ function App () {
                     <Preferences open={preference} onClose={() => {
                         setPreference(false);
                     }} />
+                    <Toast />
                     <About open={about} onClose={() => {
                         setAbout(false);
                     }} />

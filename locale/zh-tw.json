@@ -18,6 +18,8 @@
   "menu.edit.title": "編輯",
   "menu.file.about": "關於",
   "menu.file.export": "匯出",
+  "menu.file.export.failure": "匯出失敗：{reason}",
+  "menu.file.export.success": "已匯出到 {path}",
   "menu.file.new": "新建",
   "menu.file.open": "開啟",
   "menu.file.preference": "首選項",
