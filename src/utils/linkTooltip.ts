@@ -36,7 +36,11 @@ function enhanceChip (chip: HTMLElement) {
         event.stopPropagation();
 
         const url = resolveUrl(input.value);
-        if (url) openUrl(url).catch(() => undefined);
+        if (!url) return;
+
+        openUrl(url).catch(() => undefined);
+        // Hide the chip the same way the apply button does
+        chip.classList.add('hide');
     });
     applyButton.after(openButton);
 }
