@@ -3,7 +3,7 @@ import { Menu, MenuButton, MenuDivider, MenuItem, MenuList, MenuPopover, MenuTri
 import { Folder16Regular } from '@fluentui/react-icons';
 import { useAtom } from 'jotai';
 import  { open as openFilePicker, save as saveFilePicker } from '@tauri-apps/api/dialog';
-import { documentDir } from '@tauri-apps/api/path';
+import { basename, dirname, documentDir, join } from '@tauri-apps/api/path';
 import { contentJotai, dirtyJotai, filePathJotai, openFileJotai, saveAsJotai, savingJotai } from '../../jotais/file';
 import { aboutJotai, preferenceJotai, toastJotai } from '../../jotais/ui';
 import { FormattedMessage, useIntl } from 'react-intl';
@@ -97,26 +97,43 @@ const FileMenu: React.FC = () => {
                     </MenuItem>
                     <MenuDivider />
                     <MenuItem onClick={async () => {
-                        // @todo need refactor
+                        /*
+                         * Export next to the source document, using its name without the extension.
+                         * Unsaved documents keep the dialog's own defaults.
+                         */
+                        let defaultPath: string | undefined;
+                        if (filePath) {
+                            const name = await basename(filePath);
+                            const stem = name.replace(/\.[^.]+$/, '');
+                            defaultPath = await join(await dirname(filePath), stem);
+                        }
+
                         const selected = await saveFilePicker({
-                            defaultPath: await documentDir(),
+                            ...(defaultPath ? { defaultPath } : {}),
                             filters: availbleExportExts
                         });
                         if (selected === null) return;
-                        const index = selected.lastIndexOf('.');
-                        if (index === -1) return;
-                        const ext = selected.substring(index + 1).toLowerCase();
+
+                        /*
+                         * The dialog normally appends the extension of the chosen filter,
+                         * fall back to html when it doesn't
+                         */
+                        const name = await basename(selected);
+                        const dot = name.lastIndexOf('.');
+                        const ext = dot === -1 ? 'html' : name.substring(dot + 1).toLowerCase();
+                        const target = dot === -1 ? `${selected}.html` : selected;
+
                         try {
                             switch (ext) {
                             case 'htm':
                             case 'html':
-                                await exportAsHtml(selected as string, content);
+                                await exportAsHtml(target as string, content);
                                 break;
                             case 'pdf':
-                                await exportAsPdf(selected as string, content);
+                                await exportAsPdf(target as string, content);
                                 break;
                             case 'docx':
-                                await exportAsDocx(selected as string, content);
+                                await exportAsDocx(target as string, content);
                                 break;
                             default:
                                 throw new Error(`unsupported format: ${ext}`);
@@ -128,7 +145,7 @@ const FileMenu: React.FC = () => {
                                 text: intl.formatMessage({
                                     id: 'menu.file.export.success',
                                     defaultMessage: 'Exported to {path}'
-                                }, { path: selected })
+                                }, { path: target })
                             });
                         } catch (error) {
                             setToast({
