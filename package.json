@@ -13,6 +13,7 @@
     "i18n:extract": "formatjs extract --ignore=\"**/*.d.ts\" --out-file locale/en.json --format simple \"src/**/*.{ts,tsx}\""
   },
   "dependencies": {
+    "@codemirror/view": "^6.7.3",
     "@fluentui/react-components": "^9.62.0",
     "@fluentui/react-icons": "^2.0.294",
     "@material-design-icons/font": "^0.14.15",
@@ -33,13 +34,14 @@
     "@milkdown/preset-commonmark": "^6.5.4",
     "@milkdown/preset-gfm": "^6.5.4",
     "@milkdown/prose": "^6.5.4",
-    "@codemirror/view": "^6.7.3",
     "@milkdown/react": "^6.5.4",
     "@milkdown/theme-nord": "^6.5.4",
     "@milkdown/theme-tokyo": "^6.5.4",
     "@tauri-apps/api": "^1.6.0",
     "ahooks": "^3.8.4",
     "classnames": "^2.5.1",
+    "html-docx-js": "^0.3.1",
+    "html2pdf.js": "^0.14.0",
     "jotai": "^2.12.3",
     "react": "^18.3.1",
     "react-dom": "^18.3.1",

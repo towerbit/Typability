@@ -5,10 +5,9 @@ import { useAtom } from 'jotai';
 import  { open as openFilePicker, save as saveFilePicker } from '@tauri-apps/api/dialog';
 import { documentDir } from '@tauri-apps/api/path';
 import { contentJotai, dirtyJotai, filePathJotai, openFileJotai, saveAsJotai, savingJotai } from '../../jotais/file';
-import { writeTextFile } from '@tauri-apps/api/fs';
 import { aboutJotai, preferenceJotai } from '../../jotais/ui';
 import { FormattedMessage } from 'react-intl';
-import * as showdown from 'showdown';
+import { exportAsDocx, exportAsHtml, exportAsPdf } from '../../utils/export';
 
 const availbleExts = [{
     name: 'Markdown',
@@ -20,7 +19,13 @@ const availbleExts = [{
 
 const availbleExportExts = [{
     name: 'HTML',
-    extensions: ['htm']
+    extensions: ['html', 'htm']
+}, {
+    name: 'PDF',
+    extensions: ['pdf']
+}, {
+    name: 'Word Document',
+    extensions: ['docx']
 }];
 
 const FileMenu: React.FC = () => {
@@ -98,12 +103,17 @@ const FileMenu: React.FC = () => {
                         if (selected === null) return;
                         const index = selected.lastIndexOf('.');
                         if (index === -1) return;
-                        const ext = selected.substring(index + 1);
+                        const ext = selected.substring(index + 1).toLowerCase();
                         switch (ext) {
                         case 'htm':
-                            // eslint-disable-next-line no-case-declarations
-                            const converter = new showdown.Converter(); // @todo use ProseMirror's toDOM function
-                            await writeTextFile({ path: selected as string, contents: converter.makeHtml(content) });
+                        case 'html':
+                            await exportAsHtml(selected as string, content);
+                            break;
+                        case 'pdf':
+                            await exportAsPdf(selected as string, content);
+                            break;
+                        case 'docx':
+                            await exportAsDocx(selected as string, content);
                             break;
                         }
                     }}>
