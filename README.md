@@ -18,6 +18,11 @@ a WYSIWYG markdown editor based on [Milkdown](https://milkdown.dev/).
 - [x] 📝 **WYSIWYG Markdown - provides Typora-like seamless Markdown editing experience**
 # 📝 What's new
 
+## 0.6.5
+- New outline sidebar: headings of the document in a tree, click to jump to it(both in the WYSIWYG and the source code view); the width is draggable and remembered(200px ~ window width - 300px)
+- The two panes of the two-column editor scroll in sync, headings are used as anchors and the text between them is interpolated
+- Fixed: jumping from the outline in the source code view needed two clicks, or didn't work at all
+
 ## 0.6.4
 - New `Appearance` preference(follow system / light / dark), the editor theme is no longer forced by the system dark mode
 - Fixed: switching the two-column editor after leaving the source view didn't apply, the checkbox and the actual view could disagree; the edit menu now closes after toggling it
