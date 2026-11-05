@@ -8,7 +8,7 @@ import { sourceViewJotai } from '../../jotais/ui';
 import parseHeadings from '../../utils/headings';
 import styles from './outline.module.scss';
 
-const MIN_WIDTH = 300;
+const MIN_WIDTH = 200;
 /** Space that always stays for the editor */
 const MIN_EDITOR_WIDTH = 300;
 const DEFAULT_WIDTH = 300;
