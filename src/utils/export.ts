@@ -1,4 +1,5 @@
 import { writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
+import { invoke } from '@tauri-apps/api/tauri';
 import showdown from 'showdown';
 // Bundled as a plain asset, the library uses `with` statements that rollup can't parse
 import docxScriptUrl from 'html-docx-js/dist/html-docx.js?url';
@@ -43,30 +44,8 @@ export async function exportAsHtml (path: string, markdown: string) {
 }
 
 export async function exportAsPdf (path: string, markdown: string) {
-    // A4 at 96dpi, the element is kept out of sight while it's being rendered
-    const container = document.createElement('div');
-    container.style.cssText = 'position: fixed; left: -10000px; top: 0; width: 794px; background: #ffffff;';
-    container.innerHTML = `<style>${EXPORT_STYLE}</style>${bodyHtml(markdown)}`;
-    document.body.appendChild(container);
-
-    try {
-        // Loaded on demand, the library is heavy
-        const { default: html2pdf } = await import('html2pdf.js');
-
-        const pdf = await html2pdf()
-            .set({
-                margin: 10,
-                image: { type: 'jpeg', quality: 0.95 },
-                html2canvas: { scale: 2, backgroundColor: '#ffffff', useCORS: true },
-                jsPDF: { unit: 'mm', format: 'a4', orientation: 'portrait' }
-            })
-            .from(container)
-            .outputPdf('arraybuffer');
-
-        await writeBinaryFile({ path, contents: new Uint8Array(pdf as ArrayBuffer) });
-    } finally {
-        container.remove();
-    }
+    // Rendered by the chromium print pipeline in the rust side, the text stays selectable
+    await invoke('export_pdf', { html: documentHtml(markdown), path });
 }
 
 interface DocxLibrary {

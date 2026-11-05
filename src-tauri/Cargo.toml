@@ -20,6 +20,11 @@ tauri = { version = "1.6.8", features = ["app-all", "dialog-all", "fs-all", "os-
 window-vibrancy = "0.4.3"
 window-shadows = "0.2.2"
 
+[target.'cfg(windows)'.dependencies]
+webview2-com = "0.19"
+windows = "0.39"
+base64 = "0.21"
+
 [features]
 # by default Tauri runs in production mode
 # when `tauri dev` runs it is executed with `cargo run --no-default-features` if `devPath` is an URL

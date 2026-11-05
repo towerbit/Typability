@@ -3170,12 +3170,15 @@ dependencies = [
 name = "typability"
 version = "0.6.5"
 dependencies = [
+ "base64 0.21.7",
  "serde",
  "serde_json",
  "tauri",
  "tauri-build",
+ "webview2-com",
  "window-shadows",
  "window-vibrancy",
+ "windows 0.39.0",
 ]
 
 [[package]]
