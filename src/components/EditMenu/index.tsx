@@ -99,7 +99,7 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
                             defaultMessage='Add table'
                         />
                     </MenuItem>
-                    <MenuItem onClick={() => {
+                    <MenuItem disabled={sourceView} onClick={() => {
                         if (!editorInstance.current) return;
                         const editorView = editorInstance.current.ctx.get(editorViewCtx);
                         const parser = editorInstance.current.ctx.get(parserCtx);
@@ -116,7 +116,7 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
                             defaultMessage='Add diagram'
                         />
                     </MenuItem>
-                    <MenuItem onClick={() => {
+                    <MenuItem disabled={sourceView} onClick={() => {
                         if (!editorInstance.current) return;
                         const editorView = editorInstance.current.ctx.get(editorViewCtx);
                         const parser = editorInstance.current.ctx.get(parserCtx);
