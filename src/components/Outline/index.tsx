@@ -60,20 +60,16 @@ const Outline: React.FC<OutlineProps> = ({ editorInstance }) => {
         if (!instance) return;
 
         const view = instance.ctx.get(editorViewCtx);
-        let current = 0;
-        let target = -1;
+        const positions: number[] = [];
 
         view.state.doc.descendants((node, pos) => {
             if (node.type.name !== 'heading') return true;
-            if (current === index) {
-                target = pos;
-                return false;
-            }
-            current += 1;
+            positions.push(pos);
             return false;
         });
 
-        if (target < 0) return;
+        const target = positions[index];
+        if (target === undefined) return;
 
         const selection = TextSelection.near(view.state.doc.resolve(target + 1));
         view.dispatch(view.state.tr.setSelection(selection).scrollIntoView());
