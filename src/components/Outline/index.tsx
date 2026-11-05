@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import { Editor, editorViewCtx } from '@milkdown/core';
 import { TextSelection } from '@milkdown/prose/state';
 import { contentJotai } from '../../jotais/file';
-import { outlineJumpJotai, sourceViewJotai } from '../../jotais/ui';
+import { sourceViewJotai } from '../../jotais/ui';
 import styles from './outline.module.scss';
 
 interface Heading {
@@ -47,12 +47,13 @@ interface OutlineProps {
     editorInstance: {
         current?: Editor | null;
     };
+    /** Move the caret of the source editor, used in the source code view */
+    onJumpSource: (offset: number) => void;
 }
 
-const Outline: React.FC<OutlineProps> = ({ editorInstance }) => {
+const Outline: React.FC<OutlineProps> = ({ editorInstance, onJumpSource }) => {
     const [content] = useAtom(contentJotai);
     const [sourceView] = useAtom(sourceViewJotai);
-    const [, setJump] = useAtom(outlineJumpJotai);
     const headings = useMemo(() => parseHeadings(content), [content]);
 
     const jumpInEditor = (index: number) => {
@@ -90,7 +91,7 @@ const Outline: React.FC<OutlineProps> = ({ editorInstance }) => {
                     // Keep the focus where it is, the click is handled below
                     onMouseDown={(event) => event.preventDefault()}
                     onClick={() => {
-                        if (sourceView) setJump({ offset: heading.offset, key: Date.now() });
+                        if (sourceView) onJumpSource(heading.offset);
                         else jumpInEditor(index);
                     }}
                 >

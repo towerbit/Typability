@@ -19,7 +19,7 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { appWindow } from '@tauri-apps/api/window';
 import { TauriEvent } from '@tauri-apps/api/event';
 import FloatingToolbar from "./components/FloatingToolbar";
-import SourceEditor from "./components/SourceEditor";
+import SourceEditor, { SourceEditorHandle } from "./components/SourceEditor";
 import Outline from "./components/Outline";
 import { Editor } from "@milkdown/core";
 import { IntlProvider } from 'react-intl';
@@ -47,6 +47,7 @@ function App () {
     const appearance = settings.appearance ?? 'system';
     const isDarkMode = appearance === 'system' ? systemIsDark : appearance === 'dark';
     const editorInstance = useRef<Editor>(null);
+    const sourceEditorRef = useRef<SourceEditorHandle>(null);
     useRememberWindowState();
 
     // Initialize
@@ -152,9 +153,12 @@ function App () {
                 })}>
                     <TitleBar editorInstance={editorInstance} />
                     <div className={styles.body}>
-                        {outline && <Outline editorInstance={editorInstance} />}
+                        {outline && <Outline
+                            editorInstance={editorInstance}
+                            onJumpSource={(offset) => sourceEditorRef.current?.scrollToOffset(offset)}
+                        />}
                         <div className={styles.editor} spellCheck={false}>
-                            {sourceView && <SourceEditor />}
+                            {sourceView && <SourceEditor ref={sourceEditorRef} />}
                             {!sourceView && <MilkdownEditor
                                 useMenu={false}
                                 useSlash={settings.slash}
