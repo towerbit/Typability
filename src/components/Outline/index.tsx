@@ -87,6 +87,8 @@ const Outline: React.FC<OutlineProps> = ({ editorInstance }) => {
                     className={styles.item}
                     style={{ paddingLeft: `${(heading.level - 1) * 14 + 8}px` }}
                     title={heading.text}
+                    // Keep the focus where it is, the click is handled below
+                    onMouseDown={(event) => event.preventDefault()}
                     onClick={() => {
                         if (sourceView) setJump({ offset: heading.offset, key: Date.now() });
                         else jumpInEditor(index);

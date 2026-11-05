@@ -12,11 +12,18 @@ const SourceEditor: React.FC = () => {
 
     // Move the caret to the heading picked in the outline
     useEffect(() => {
-        const element = textareaRef.current;
-        if (!jump || !element) return;
+        if (!jump) return;
 
-        element.focus();
-        element.setSelectionRange(jump.offset, jump.offset);
+        // Wait for the click to be finished, otherwise the click steals the focus back
+        const frame = requestAnimationFrame(() => {
+            const element = textareaRef.current;
+            if (!element) return;
+
+            element.focus();
+            element.setSelectionRange(jump.offset, jump.offset);
+        });
+
+        return () => cancelAnimationFrame(frame);
     }, [jump]);
 
     return (
