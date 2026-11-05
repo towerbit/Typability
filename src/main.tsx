@@ -19,8 +19,14 @@ async function bootstrap () {
             const parsed = JSON.parse(raw) as Partial<typeof defaultSettings> & { windowState?: unknown };
             // Window geometry is owned by the rust side, don't put it back into the atom
             delete parsed.windowState;
-            getDefaultStore().set(settingsJotai, { ...defaultSettings, ...parsed });
+
+            const merged = { ...defaultSettings, ...parsed };
+            getDefaultStore().set(settingsJotai, merged);
+            await invoke('save_settings', { settings: JSON.stringify(merged) });
         }
+
+        // The preferences now live in settings.json, drop the legacy copy
+        window.localStorage.removeItem('settings');
     } catch {
         // Keep the defaults when the settings can't be read
     }
