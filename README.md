@@ -18,6 +18,12 @@ a WYSIWYG markdown editor based on [Milkdown](https://milkdown.dev/).
 - [x] 📝 **WYSIWYG Markdown - provides Typora-like seamless Markdown editing experience**
 # 📝 What's new
 
+## 0.6.4
+- New `Appearance` preference(follow system / light / dark), the editor theme is no longer forced by the system dark mode
+- Fixed: switching the two-column editor after leaving the source view didn't apply, the checkbox and the actual view could disagree; the edit menu now closes after toggling it
+- `Add diagram` / `Add formula` are disabled in the source code view
+- The link chip closes after `OPEN` is clicked
+
 ## 0.6.3
 - Find/replace matches are highlighted in the editor, the current match is emphasized; match positions in nested blocks(e.g. list items) are fixed
 - The search box gets the focus automatically when the find/replace toolbar opens
