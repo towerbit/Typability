@@ -14,6 +14,7 @@ interface Setting {
     defaultPath: string;
     vibrancy: 'mica' | 'arcylic' | 'none';
     rememberWindowState: boolean;
+    outlineWidth: number;
 }
 
 export const settingsJotai = atomWithStorage<Setting>('settings', {
@@ -28,5 +29,6 @@ export const settingsJotai = atomWithStorage<Setting>('settings', {
     saveInterval: 120,
     defaultPath: '',
     vibrancy: 'none',
-    rememberWindowState: false
+    rememberWindowState: false,
+    outlineWidth: 240
 });

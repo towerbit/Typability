@@ -1,6 +1,7 @@
 .outline {
-    flex: 0 0 240px;
-    width: 240px;
+    position: relative;
+    flex-grow: 0;
+    flex-shrink: 0;
     height: calc(100vh - 1rem - 40px);
     box-sizing: border-box;
     padding: 8px 4px;
@@ -9,6 +10,19 @@
     font-size: 13px;
     color: var(--colorNeutralForeground1);
     user-select: none;
+
+    .resizer {
+        position: absolute;
+        top: 0;
+        right: 0;
+        width: 4px;
+        height: 100%;
+        cursor: col-resize;
+
+        &:hover {
+            background-color: var(--colorNeutralStroke1);
+        }
+    }
 
     .item {
         padding: 4px 8px;
