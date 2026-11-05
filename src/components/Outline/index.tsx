@@ -8,10 +8,13 @@ import { outlineJotai, sourceViewJotai } from '../../jotais/ui';
 import parseHeadings from '../../utils/headings';
 import styles from './outline.module.scss';
 
-const MIN_WIDTH = 100;
+const MIN_WIDTH = 300;
 /** Space that always stays for the editor */
-const MIN_EDITOR_WIDTH = 100;
-const DEFAULT_WIDTH = 240;
+const MIN_EDITOR_WIDTH = 300;
+const DEFAULT_WIDTH = 300;
+
+const maxWidth = () => Math.max(MIN_WIDTH, window.innerWidth - MIN_EDITOR_WIDTH);
+const clampWidth = (value: number) => Math.min(Math.max(value, MIN_WIDTH), maxWidth());
 
 interface OutlineProps {
     editorInstance: {
@@ -28,7 +31,7 @@ const Outline: React.FC<OutlineProps> = ({ editorInstance, onJumpSource }) => {
     const [, setOutline] = useAtom(outlineJotai);
     const headings = useMemo(() => parseHeadings(content), [content]);
 
-    const storedWidth = settings.outlineWidth > 0 ? settings.outlineWidth : DEFAULT_WIDTH;
+    const storedWidth = clampWidth(settings.outlineWidth > 0 ? settings.outlineWidth : DEFAULT_WIDTH);
     const [width, setWidth] = useState(storedWidth);
     const widthRef = useRef(storedWidth);
     const rootRef = useRef<HTMLDivElement>(null);
@@ -42,7 +45,7 @@ const Outline: React.FC<OutlineProps> = ({ editorInstance, onJumpSource }) => {
     // Don't let the sidebar push the editor out when the window shrinks
     useEffect(() => {
         const onResize = () => {
-            const max = Math.max(MIN_WIDTH, window.innerWidth - MIN_EDITOR_WIDTH);
+            const max = maxWidth();
             if (widthRef.current <= max) return;
             widthRef.current = max;
             setWidth(max);
@@ -68,8 +71,7 @@ const Outline: React.FC<OutlineProps> = ({ editorInstance, onJumpSource }) => {
         };
 
         const onMove = (moveEvent: MouseEvent) => {
-            const max = Math.max(MIN_WIDTH, window.innerWidth - MIN_EDITOR_WIDTH);
-            const next = Math.min(moveEvent.clientX - left, max);
+            const next = Math.min(moveEvent.clientX - left, maxWidth());
 
             // Dragging below the minimum width means hiding the sidebar
             if (next < MIN_WIDTH) {
