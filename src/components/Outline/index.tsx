@@ -4,7 +4,7 @@ import { Editor, editorViewCtx } from '@milkdown/core';
 import { TextSelection } from '@milkdown/prose/state';
 import { contentJotai } from '../../jotais/file';
 import { settingsJotai } from '../../jotais/settings';
-import { outlineJotai, sourceViewJotai } from '../../jotais/ui';
+import { sourceViewJotai } from '../../jotais/ui';
 import parseHeadings from '../../utils/headings';
 import styles from './outline.module.scss';
 
@@ -28,7 +28,6 @@ const Outline: React.FC<OutlineProps> = ({ editorInstance, onJumpSource }) => {
     const [content] = useAtom(contentJotai);
     const [sourceView] = useAtom(sourceViewJotai);
     const [settings, setSettings] = useAtom(settingsJotai);
-    const [, setOutline] = useAtom(outlineJotai);
     const headings = useMemo(() => parseHeadings(content), [content]);
 
     const storedWidth = clampWidth(settings.outlineWidth > 0 ? settings.outlineWidth : DEFAULT_WIDTH);
@@ -71,14 +70,7 @@ const Outline: React.FC<OutlineProps> = ({ editorInstance, onJumpSource }) => {
         };
 
         const onMove = (moveEvent: MouseEvent) => {
-            const next = Math.min(moveEvent.clientX - left, maxWidth());
-
-            // Dragging below the minimum width means hiding the sidebar
-            if (next < MIN_WIDTH) {
-                finish();
-                setOutline(false);
-                return;
-            }
+            const next = Math.min(Math.max(moveEvent.clientX - left, MIN_WIDTH), maxWidth());
 
             widthRef.current = next;
             setWidth(next);
@@ -94,7 +86,7 @@ const Outline: React.FC<OutlineProps> = ({ editorInstance, onJumpSource }) => {
         window.addEventListener('mouseup', onUp);
         document.body.style.cursor = 'col-resize';
         document.body.style.userSelect = 'none';
-    }, [setOutline, setSettings]);
+    }, [setSettings]);
 
     const jumpInEditor = (index: number) => {
         const instance = editorInstance.current;
