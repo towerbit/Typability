@@ -18,6 +18,10 @@ a WYSIWYG markdown editor based on [Milkdown](https://milkdown.dev/).
 - [x] 📝 **WYSIWYG Markdown - provides Typora-like seamless Markdown editing experience**
 # 📝 What's new
 
+## 0.6.8
+- New "Remember current view" preference: keeps the two-column, source code and outline toggles across restarts and when opening documents
+- All preferences and the window geometry now live in a single `settings.json` in the app config directory; the old localStorage and `window-state.json` values are migrated automatically
+
 ## 0.6.7
 - Five new editor themes: Github, Newsprint, Night, Pixyll and Whitey, with their fonts bundled
 - Only one editor theme setting now(the dark one was ineffective); the Night theme also includes its dark code block and mermaid styles

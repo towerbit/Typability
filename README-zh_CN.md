@@ -18,6 +18,10 @@
 - [x] 📝 **所见即所得的 Markdown - 提供类似于 Typora 的无缝编辑体验**
 # 📝 最近更新
 
+## 0.6.8
+- 新增「记住当前视图」：重启或打开文档时恢复双栏、源代码、大纲的勾选状态；不启用则一律回到单栏所见即所得
+- 首选项与窗口大小位置统一存放到应用配置目录的 `settings.json`，旧 localStorage 与 `window-state.json` 自动迁移
+
 ## 0.6.7
 - 新增 5 个编辑器主题：Github / Newsprint / Night / Pixyll / Whitey，并随包提供字体资源
 - 首选项只保留一个编辑器主题（去掉不起作用的暗色下拉）；Night 主题合并了代码块、mermaid 的暗色子样式
