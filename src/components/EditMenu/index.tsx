@@ -137,6 +137,7 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
                     <MenuItemCheckbox
                         name='twoColumnEditor'
                         value='twoColumn'
+                        persistOnClick={false}
                     >
                         <FormattedMessage
                             id='menu.edit.twoColumnEditor'
