@@ -37,4 +37,4 @@ export const settingsJotai = atomWithStorage<Setting>('settings', {
     viewSource: false,
     viewOutline: false,
     outlineWidth: 240
-});
+}, undefined, { getOnInit: true });

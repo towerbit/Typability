@@ -1,4 +1,4 @@
-import { useEffect } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { useUpdateEffect } from 'ahooks';
 import { settingsJotai } from '../jotais/settings';
@@ -13,15 +13,16 @@ export default function useRememberView () {
     const [twoColumn, setTwoColumn] = useAtom(twoColumnJotai);
     const [sourceView, setSourceView] = useAtom(sourceViewJotai);
     const [outline, setOutline] = useAtom(outlineJotai);
+    const restored = useRef(false);
 
     useEffect(() => {
-        if (!settings.rememberView) return;
+        if (restored.current || !settings.rememberView) return;
+        restored.current = true;
 
         setTwoColumn(settings.viewTwoColumn);
         setSourceView(settings.viewSource);
         setOutline(settings.viewOutline);
-        // Restore only once when the app starts
-    }, []);
+    }, [settings, setTwoColumn, setSourceView, setOutline]);
 
     useUpdateEffect(() => {
         if (!settings.rememberView) return;
