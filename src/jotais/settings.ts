@@ -5,7 +5,6 @@ interface Setting {
     language: keyof typeof availableLanguage;
     appearance: 'system' | 'light' | 'dark';
     theme: 'nord' | 'nordDark' | 'tokyo' | 'github' | 'newsprint' | 'night' | 'pixyll' | 'whitey';
-    themeDark: 'nord' | 'nordDark' | 'tokyo' | 'github' | 'newsprint' | 'night' | 'pixyll' | 'whitey';
     syntax: 'gfm' | 'commonmark';
     autoSave: boolean;
     saveBlur: boolean;
@@ -21,7 +20,6 @@ export const settingsJotai = atomWithStorage<Setting>('settings', {
     language: navigator.language.toLocaleLowerCase() as keyof typeof availableLanguage,
     appearance: 'system',
     theme: 'nord',
-    themeDark: 'nordDark',
     syntax: 'gfm',
     autoSave: false,
     saveBlur: false,

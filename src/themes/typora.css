@@ -1,4 +1,4 @@
-/* Typora github theme, scoped to the editor */
+/* github theme, scoped to the editor */
 [data-theme="github"] .milkdown {
 --side-bar-bg-color: #fafafa;
     --control-text-color: #777;
@@ -180,7 +180,7 @@ margin-top: 0;
 [data-theme="github"] .milkdown table th:last-child, [data-theme="github"] .milkdown table td:last-child {
 margin-bottom: 0;
 }
-[data-theme="github"] .milkdown .CodeMirror-lines {
+[data-theme="github"] .CodeMirror-lines {
 padding-left: 4px;
 }
 [data-theme="github"] .milkdown code, [data-theme="github"] .milkdown tt {
@@ -227,7 +227,7 @@ background-color: #f5f8fa;
 }
 
 
-/* Typora newsprint theme, scoped to the editor */
+/* newsprint theme, scoped to the editor */
 @font-face {
   font-family: 'PT Serif';
   font-style: normal;
@@ -546,7 +546,7 @@ background: #e0e0e0;
 }
 
 
-/* Typora night theme, scoped to the editor */
+/* night theme, scoped to the editor */
 [data-theme="night"] .milkdown {
 --bg-color:  #363B40;
     --side-bar-bg-color: #2E3033;
@@ -725,7 +725,7 @@ padding: 2px 4px;
     border-radius: 3px;
     box-shadow: inset 0 -1px 0 rgba(0,0,0,.25);
 }
-[data-theme="night"] .milkdown .CodeMirror-gutters {
+[data-theme="night"] .CodeMirror-gutters {
 background: #333;
     border-right: 1px solid transparent;
 }
@@ -908,10 +908,10 @@ background: #333333;
 color: #eee;
     background: #333333;
 }
-[data-theme="night"] .milkdown .on-focus-mode .CodeMirrorpre code:not(.CodeMirror-focused) * {
+[data-theme="night"] .on-focus-mode .CodeMirror.cm-s-inner:not(.CodeMirror-focused) * {
 color: #686868 !important;
 }
-[data-theme="night"] .milkdown .on-focus-mode #typora-source .CodeMirror-code>*:not(.CodeMirror-activeline) * {
+[data-theme="night"] .on-focus-mode #typora-source .CodeMirror-code>*:not(.CodeMirror-activeline) * {
 color: #686868 !important;
 }
 [data-theme="night"] .milkdown .active-tab-files #info-panel-tab-file, [data-theme="night"] .milkdown .active-tab-files #info-panel-tab-file:hover, [data-theme="night"] .milkdown .active-tab-outline #info-panel-tab-outline, [data-theme="night"] .milkdown .active-tab-outline #info-panel-tab-outline:hover {
@@ -971,9 +971,115 @@ top: 8px;
 [data-theme="night"] .milkdown .file-node-expanded>.file-node-children {
 display: grid;
 }
+[data-theme="night"] .cm-s-inner .cm-variable, [data-theme="night"] .cm-s-inner .cm-operator, [data-theme="night"] .cm-s-inner .cm-property {
+color: #b8bfc6;
+}
+[data-theme="night"] .cm-s-inner .cm-keyword {
+color: #C88FD0;
+}
+[data-theme="night"] .cm-s-inner .cm-tag {
+color: #7DF46A;
+}
+[data-theme="night"] .cm-s-inner .cm-attribute {
+color: #7575E4;
+}
+[data-theme="night"] .CodeMirror div.CodeMirror-cursor {
+border-left: 1px solid #b8bfc6;
+    z-index: 3;
+}
+[data-theme="night"] .cm-s-inner .cm-string {
+color: #D26B6B;
+}
+[data-theme="night"] .cm-s-inner .cm-comment, [data-theme="night"] .cm-s-inner.cm-comment {
+color: #DA924A;
+}
+[data-theme="night"] .cm-s-inner .cm-header, [data-theme="night"] .cm-s-inner .cm-def, [data-theme="night"] .cm-s-inner.cm-header, [data-theme="night"] .cm-s-inner.cm-def {
+color: #8d8df0;
+}
+[data-theme="night"] .cm-s-inner .cm-quote, [data-theme="night"] .cm-s-inner.cm-quote {
+color: #57ac57;
+}
+[data-theme="night"] .cm-s-inner .cm-hr {
+color: #d8d5d5;
+}
+[data-theme="night"] .cm-s-inner .cm-link {
+color: #d3d3ef;
+}
+[data-theme="night"] .cm-s-inner .cm-negative {
+color: #d95050;
+}
+[data-theme="night"] .cm-s-inner .cm-positive {
+color: #50e650;
+}
+[data-theme="night"] .cm-s-inner .cm-string-2 {
+color: #f50;
+}
+[data-theme="night"] .cm-s-inner .cm-meta, [data-theme="night"] .cm-s-inner .cm-qualifier {
+color: #b7b3b3;
+}
+[data-theme="night"] .cm-s-inner .cm-builtin {
+color: #f3b3f8;
+}
+[data-theme="night"] .cm-s-inner .cm-bracket {
+color: #997;
+}
+[data-theme="night"] .cm-s-inner .cm-atom, [data-theme="night"] .cm-s-inner.cm-atom {
+color: #84B6CB;
+}
+[data-theme="night"] .cm-s-inner .cm-number {
+color: #64AB8F;
+}
+[data-theme="night"] .cm-s-inner .cm-variable {
+color: #b8bfc6;
+}
+[data-theme="night"] .cm-s-inner .cm-variable-2 {
+color: #9FBAD5;
+}
+[data-theme="night"] .cm-s-inner .cm-variable-3 {
+color: #1cc685;
+}
+[data-theme="night"] .CodeMirror-selectedtext, [data-theme="night"] .CodeMirror-selected {
+background: #4a89dc;
+    color: #fff !important;
+    text-shadow: none;
+}
+[data-theme="night"] .CodeMirror-gutters {
+border-right: none;
+}
+[data-theme="night"] .milkdown {
+--mermaid-theme: night;
+}
+[data-theme="night"] [lang='mermaid'] .label {
+color: #333;
+}
+[data-theme="night"] .cm-s-typora-default .cm-header, [data-theme="night"] .cm-s-typora-default .cm-property {
+color: #cebcca;
+}
+[data-theme="night"] .CodeMirror.cm-s-typora-default div.CodeMirror-cursor {
+border-left: 3px solid #b8bfc6;
+}
+[data-theme="night"] .cm-s-typora-default .cm-comment {
+color: #9FB1FF;
+}
+[data-theme="night"] .cm-s-typora-default .cm-string {
+color: #A7A7D9
+}
+[data-theme="night"] .cm-s-typora-default .cm-atom, [data-theme="night"] .cm-s-typora-default .cm-number {
+color: #848695;
+    font-style: italic;
+}
+[data-theme="night"] .cm-s-typora-default .cm-link {
+color: #95B94B;
+}
+[data-theme="night"] .cm-s-typora-default .CodeMirror-activeline-background {
+background: rgba(51, 51, 51, 0.72);
+}
+[data-theme="night"] .cm-s-typora-default .cm-comment, [data-theme="night"] .cm-s-typora-default .cm-code {
+color: #8aa1e1;
+}
 
 
-/* Typora pixyll theme, scoped to the editor */
+/* pixyll theme, scoped to the editor */
 [data-theme="pixyll"] .milkdown {
 --control-text-color: #777;
 }
@@ -1237,10 +1343,10 @@ font-family: Courier, monospace;
 [data-theme="pixyll"] .milkdown .os-windows #typora-source {
 font-family: inherit;
 }
-[data-theme="pixyll"] .milkdown .cm-s-typora-default .cm-header, [data-theme="pixyll"] .milkdown .cm-s-typora-default .cm-property, [data-theme="pixyll"] .milkdown .CodeMirror.cm-s-typora-default div.CodeMirror-cursor {
+[data-theme="pixyll"] .cm-s-typora-default .cm-header, [data-theme="pixyll"] .cm-s-typora-default .cm-property, [data-theme="pixyll"] .CodeMirror.cm-s-typora-default div.CodeMirror-cursor {
 color: #428bca;
 }
-[data-theme="pixyll"] .milkdown .cm-s-typora-default .cm-atom, [data-theme="pixyll"] .milkdown .cm-s-typora-default .cm-number {
+[data-theme="pixyll"] .cm-s-typora-default .cm-atom, [data-theme="pixyll"] .cm-s-typora-default .cm-number {
 color: #777777;
 }
 [data-theme="pixyll"] .milkdown li {
@@ -1251,7 +1357,7 @@ margin-bottom: 0;
 }
 
 
-/* Typora whitey theme, scoped to the editor */
+/* whitey theme, scoped to the editor */
 [data-theme="whitey"] .milkdown {
 font-size: 19px;
 }
@@ -1396,10 +1502,10 @@ font-family: Courier, monospace;
 -webkit-box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
     box-shadow: 0 6px 12px rgba(0, 0, 0, .175);
 }
-[data-theme="whitey"] .milkdown .cm-s-typora-default .cm-header, [data-theme="whitey"] .milkdown .cm-s-typora-default .cm-property, [data-theme="whitey"] .milkdown .CodeMirror.cm-s-typora-default div.CodeMirror-cursor {
+[data-theme="whitey"] .cm-s-typora-default .cm-header, [data-theme="whitey"] .cm-s-typora-default .cm-property, [data-theme="whitey"] .CodeMirror.cm-s-typora-default div.CodeMirror-cursor {
 color: #428bca;
 }
-[data-theme="whitey"] .milkdown .cm-s-typora-default .cm-atom, [data-theme="whitey"] .milkdown .cm-s-typora-default .cm-number {
+[data-theme="whitey"] .cm-s-typora-default .cm-atom, [data-theme="whitey"] .cm-s-typora-default .cm-number {
 color: #777777;
 }
 

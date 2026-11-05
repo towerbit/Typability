@@ -47,7 +47,7 @@ function App () {
     // Older settings don't have the appearance field, keep following the system for them
     const appearance = settings.appearance ?? 'system';
     const isDarkMode = appearance === 'system' ? systemIsDark : appearance === 'dark';
-    const activeTheme = isDarkMode ? settings.themeDark : settings.theme;
+    const activeTheme = settings.theme;
     // Typora themes are css overlays on top of the nord milkdown theme
     const typoraTheme = /^(github|newsprint|night|pixyll|whitey)$/.test(activeTheme) ? activeTheme : undefined;
     const editorTheme = (typoraTheme ? 'nord' : activeTheme) as 'nord' | 'nordDark' | 'tokyo';

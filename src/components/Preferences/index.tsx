@@ -33,11 +33,11 @@ const themeMap = {
     nord: 'Nord',
     nordDark: 'Nord (Dark)',
     tokyo: 'Tokyo',
-    github: 'Github (Typora)',
-    newsprint: 'Newsprint (Typora)',
-    night: 'Night (Typora)',
-    pixyll: 'Pixyll (Typora)',
-    whitey: 'Whitey (Typora)'
+    github: 'Github',
+    newsprint: 'Newsprint',
+    night: 'Night',
+    pixyll: 'Pixyll',
+    whitey: 'Whitey'
 };
 
 const themeOptions = Object.keys(themeMap).map((key) => (
@@ -152,22 +152,6 @@ const Preferences: React.FC<PerferencesProps> = ({
                                 value={themeMap[settings.theme]}
                                 onOptionSelect={(e, data) => {
                                     setSetting('theme', data.optionValue);
-                                }}
-                            >
-                                {themeOptions}
-                            </Dropdown>
-                        </div>
-                        <div className={styles.option}>
-                            <p className={styles.description}>
-                                <FormattedMessage
-                                    id="preferences.darkTheme"
-                                    defaultMessage="Editor theme(dark)"
-                                />
-                            </p>
-                            <Dropdown
-                                value={themeMap[settings.themeDark]}
-                                onOptionSelect={(e, data) => {
-                                    setSetting('themeDark', data.optionValue);
                                 }}
                             >
                                 {themeOptions}

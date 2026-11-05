@@ -1,5 +1,8 @@
 import { writeBinaryFile, writeTextFile } from '@tauri-apps/api/fs';
 import { invoke } from '@tauri-apps/api/tauri';
+import { getDefaultStore } from 'jotai';
+import { settingsJotai } from '../jotais/settings';
+import { exportStyles } from '../themes/exportStyles';
 import showdown from 'showdown';
 // Bundled as a plain asset, the library uses `with` statements that rollup can't parse
 import docxScriptUrl from 'html-docx-js/dist/html-docx.js?url';
@@ -29,13 +32,18 @@ function bodyHtml (markdown: string) {
 }
 
 function documentHtml (markdown: string) {
+    // Use the same theme as the editor, the styles are generated without the data-theme scope
+    const theme = getDefaultStore().get(settingsJotai).theme;
+    const themeStyle = exportStyles[theme] ?? '';
+
     return `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8" />
-<style>${EXPORT_STYLE}</style>
+<style>${EXPORT_STYLE}
+${themeStyle}</style>
 </head>
-<body>${bodyHtml(markdown)}</body>
+<body><div class="editor">${bodyHtml(markdown)}</div></body>
 </html>`;
 }
 
