@@ -18,6 +18,11 @@
 - [x] 📝 **所见即所得的 Markdown - 提供类似于 Typora 的无缝编辑体验**
 # 📝 最近更新
 
+## 0.6.7
+- 新增 5 个编辑器主题：Github / Newsprint / Night / Pixyll / Whitey，并随包提供字体资源
+- 首选项只保留一个编辑器主题（去掉不起作用的暗色下拉）；Night 主题合并了代码块、mermaid 的暗色子样式
+- 导出（HTML/PDF/DOCX）跟随当前主题：内嵌主题字体、背景色铺满整页不留白边
+
 ## 0.6.6
 - 导出新增 PDF 和 DOCX 格式（HTML 一并整理为完整文档）
 - PDF 为文字版：走各平台原生打印管线（Windows WebView2 CDP、macOS WKWebView、Linux WebKitGTK），Windows 下自动按标题层级生成 PDF 书签大纲
