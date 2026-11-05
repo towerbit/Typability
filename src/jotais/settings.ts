@@ -3,6 +3,7 @@ import availableLanguage from '../../locale';
 
 interface Setting {
     language: keyof typeof availableLanguage;
+    appearance: 'system' | 'light' | 'dark';
     theme: 'nord' | 'nordDark' | 'tokyo';
     themeDark: 'nord' | 'nordDark' | 'tokyo';
     syntax: 'gfm' | 'commonmark';
@@ -17,6 +18,7 @@ interface Setting {
 
 export const settingsJotai = atomWithStorage<Setting>('settings', {
     language: navigator.language.toLocaleLowerCase() as keyof typeof availableLanguage,
+    appearance: 'system',
     theme: 'nord',
     themeDark: 'nordDark',
     syntax: 'gfm',

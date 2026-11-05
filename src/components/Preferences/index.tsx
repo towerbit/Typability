@@ -108,6 +108,33 @@ const Preferences: React.FC<PerferencesProps> = ({
                         <div className={styles.option}>
                             <p className={styles.description}>
                                 <FormattedMessage
+                                    id="preferences.appearance"
+                                    defaultMessage="Appearance"
+                                />
+                            </p>
+                            <Dropdown
+                                value={intl.formatMessage({
+                                    id: `preferences.appearance.${settings.appearance ?? 'system'}`,
+                                    defaultMessage: 'Follow system'
+                                })}
+                                onOptionSelect={(e, data) => {
+                                    setSetting('appearance', data.optionValue);
+                                }}
+                            >
+                                <Option value="system">
+                                    {intl.formatMessage({ id: 'preferences.appearance.system', defaultMessage: 'Follow system' })}
+                                </Option>
+                                <Option value="light">
+                                    {intl.formatMessage({ id: 'preferences.appearance.light', defaultMessage: 'Light' })}
+                                </Option>
+                                <Option value="dark">
+                                    {intl.formatMessage({ id: 'preferences.appearance.dark', defaultMessage: 'Dark' })}
+                                </Option>
+                            </Dropdown>
+                        </div>
+                        <div className={styles.option}>
+                            <p className={styles.description}>
+                                <FormattedMessage
                                     id="preferences.lightTheme"
                                     defaultMessage="Editor theme(light)"
                                 />

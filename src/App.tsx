@@ -40,7 +40,10 @@ function App () {
     const [preference, setPreference] = useAtom(preferenceJotai);
     const [vibrancy, setVibrancy] = useAtom(vibrancyJotai);
     const [about, setAbout] = useAtom(aboutJotai);
-    const isDarkMode = useIsDarkMode();
+    const systemIsDark = useIsDarkMode();
+    // Older settings don't have the appearance field, keep following the system for them
+    const appearance = settings.appearance ?? 'system';
+    const isDarkMode = appearance === 'system' ? systemIsDark : appearance === 'dark';
     const editorInstance = useRef<Editor>(null);
     useRememberWindowState();
 
@@ -136,7 +139,7 @@ function App () {
 
     useEffect(() => {
         if (settings.vibrancy !== 'none') invoke(`apply_${settings.vibrancy}`, {dark: isDarkMode});
-    }, [settings.vibrancy]);
+    }, [settings.vibrancy, isDarkMode]);
 
     return (
         <FluentProvider theme={isDarkMode ? webDarkTheme : webLightTheme} className='provider'>
