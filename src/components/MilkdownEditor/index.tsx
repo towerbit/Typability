@@ -21,7 +21,7 @@ import { refractor } from 'refractor/lib/common';
 import { math } from '@milkdown/plugin-math';
 import { cursor } from '@milkdown/plugin-cursor';
 import 'katex/dist/katex.min.css';
-import { splitEditing, ToggleSplitEditing } from '@milkdown-lab/plugin-split-editing';
+import { splitEditing, splitEditingCtx, ToggleSplitEditing } from '@milkdown-lab/plugin-split-editing';
 import enhanceLinkTooltip from '../../utils/linkTooltip';
 import { findHighlightPlugin } from '../../utils/findHighlight';
 
@@ -82,17 +82,6 @@ const MilkdownEditor: React.FC<MilkdownEditor> = forwardRef<Editor, MilkdownEdit
             else ref.current = getInstance() ?? null;
         }
     });
-
-    useEffect(() => {
-        setTimeout(() => {
-            const instance = getInstance();
-            if (!instance || instance.status !== EditorStatus.Created) return;
-            instance.action((ctx) => {
-                const commandManager = ctx.get(commandsCtx);
-                commandManager.call(ToggleSplitEditing);
-            });
-        }, 1);
-    }, [twoColumnEditor]);
 
     useUpdateEffect(() => {
         if (!loading) {
@@ -157,6 +146,24 @@ const MilkdownEditor: React.FC<MilkdownEditor> = forwardRef<Editor, MilkdownEdit
 
         return instance;
     });
+
+    useEffect(() => {
+        // Wait until the editor is created, it re-mounts when leaving the source view
+        if (loading) return;
+
+        const timer = setTimeout(() => {
+            const instance = getInstance();
+            if (!instance || instance.status !== EditorStatus.Created) return;
+            instance.action((ctx) => {
+                // ToggleSplitEditing flips the state, so only call it when it differs
+                const { value } = ctx.get(splitEditingCtx);
+                if (value === twoColumnEditor) return;
+                ctx.get(commandsCtx).call(ToggleSplitEditing);
+            });
+        }, 1);
+
+        return () => clearTimeout(timer);
+    }, [twoColumnEditor, loading]);
 
     // Widen the link chip and add an "OPEN" button to it
     useEffect(() => {
