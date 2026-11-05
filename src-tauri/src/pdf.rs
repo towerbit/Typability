@@ -69,7 +69,7 @@ pub fn render_pdf (app: &AppHandle, html: &str, path: &str) -> Result<(), String
         let method = HSTRING::from("Page.printToPDF");
         // generateDocumentOutline builds the pdf bookmarks from h1-h6 elements
         let params = HSTRING::from(
-            r#"{"printBackground":true,"preferCSSPageSize":true,"generateDocumentOutline":true}"#
+            r#"{"printBackground":true,"preferCSSPageSize":true,"generateDocumentOutline":true,"marginTop":0,"marginBottom":0,"marginLeft":0,"marginRight":0}"#
         );
 
         if let Err(error) = core.CallDevToolsProtocolMethod(&method, &params, &handler) {

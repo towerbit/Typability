@@ -145,7 +145,7 @@ const Preferences: React.FC<PerferencesProps> = ({
                             <p className={styles.description}>
                                 <FormattedMessage
                                     id="preferences.lightTheme"
-                                    defaultMessage="Editor theme(light)"
+                                    defaultMessage="Editor theme"
                                 />
                             </p>
                             <Dropdown

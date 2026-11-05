@@ -35,7 +35,7 @@
     "preferences.appearance.system": "跟随系统",
     "preferences.autoSave": "自动保存",
     "preferences.language": "语言",
-    "preferences.lightTheme": "编辑器主题(亮色)",
+    "preferences.lightTheme": "编辑器主题",
     "preferences.relaunch": "你需要重新启动程序来应用更改",
     "preferences.rememberWindowState": "记住窗口大小和位置",
     "preferences.saveBlur": "当编辑器失去焦点时保存",

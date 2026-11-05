@@ -3,6 +3,16 @@ import { invoke } from '@tauri-apps/api/tauri';
 import { getDefaultStore } from 'jotai';
 import { settingsJotai } from '../jotais/settings';
 import { exportStyles } from '../themes/exportStyles';
+
+// Fonts are loaded on demand, they are large but only needed for the typora themes
+let fontStylesPromise: Promise<Record<string, string>> | null = null;
+
+function loadFontStyles () {
+    if (!fontStylesPromise) {
+        fontStylesPromise = import('../themes/fontStyles').then((module) => module.fontStyles);
+    }
+    return fontStylesPromise;
+}
 import showdown from 'showdown';
 // Bundled as a plain asset, the library uses `with` statements that rollup can't parse
 import docxScriptUrl from 'html-docx-js/dist/html-docx.js?url';
@@ -31,29 +41,31 @@ function bodyHtml (markdown: string) {
     return converter.makeHtml(markdown);
 }
 
-function documentHtml (markdown: string) {
+async function documentHtml (markdown: string) {
     // Use the same theme as the editor, the styles are generated without the data-theme scope
     const theme = getDefaultStore().get(settingsJotai).theme;
     const themeStyle = exportStyles[theme] ?? '';
+    const fontStyle = themeStyle ? (await loadFontStyles())[theme] ?? '' : '';
 
     return `<!DOCTYPE html>
 <html>
 <head>
 <meta charset="utf-8" />
 <style>${EXPORT_STYLE}
-${themeStyle}</style>
+${themeStyle}
+${fontStyle}</style>
 </head>
 <body><div class="editor">${bodyHtml(markdown)}</div></body>
 </html>`;
 }
 
 export async function exportAsHtml (path: string, markdown: string) {
-    await writeTextFile({ path, contents: documentHtml(markdown) });
+    await writeTextFile({ path, contents: await documentHtml(markdown) });
 }
 
 export async function exportAsPdf (path: string, markdown: string) {
     // Rendered by the chromium print pipeline in the rust side, the text stays selectable
-    await invoke('export_pdf', { html: documentHtml(markdown), path });
+    await invoke('export_pdf', { html: await documentHtml(markdown), path });
 }
 
 interface DocxLibrary {
@@ -86,7 +98,7 @@ function loadDocxLibrary () {
 export async function exportAsDocx (path: string, markdown: string) {
     const library = await loadDocxLibrary();
 
-    const blob = library.asBlob(documentHtml(markdown), {
+    const blob = library.asBlob(await documentHtml(markdown), {
         orientation: 'portrait',
         margins: { top: 1080, right: 1080, bottom: 1080, left: 1080 }
     });

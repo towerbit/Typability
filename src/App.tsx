@@ -51,8 +51,7 @@ function App () {
     // Typora themes are css overlays on top of the nord milkdown theme
     const typoraTheme = /^(github|newsprint|night|pixyll|whitey)$/.test(activeTheme) ? activeTheme : undefined;
     const editorTheme = (typoraTheme ? 'nord' : activeTheme) as 'nord' | 'nordDark' | 'tokyo';
-    const editorInstance = useRef<Editor>(null);
-    const sourceEditorRef = useRef<SourceEditorHandle>(null);
+    const editorInstance = useRef<Editor>(null);    const sourceEditorRef = useRef<SourceEditorHandle>(null);
     useRememberWindowState();
 
     // Initialize
