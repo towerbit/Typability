@@ -24,6 +24,7 @@ import 'katex/dist/katex.min.css';
 import { splitEditing, splitEditingCtx, ToggleSplitEditing } from '@milkdown-lab/plugin-split-editing';
 import enhanceLinkTooltip from '../../utils/linkTooltip';
 import { findHighlightPlugin } from '../../utils/findHighlight';
+import attachSplitScrollSync from '../../utils/splitScrollSync';
 
 interface MilkdownEditor {
     content: string;
@@ -168,6 +169,19 @@ const MilkdownEditor: React.FC<MilkdownEditor> = forwardRef<Editor, MilkdownEdit
 
         return () => clearTimeout(timer);
     }, [twoColumnEditor, loading]);
+
+    // Keep both panes of the two-column editor scrolled to the same place
+    useEffect(() => {
+        if (loading || !twoColumnEditor) return;
+
+        const instance = getInstance();
+        if (!instance) return;
+
+        const container = instance.ctx.get(editorViewCtx).dom.closest('.milkdown-split-editing-wrapper');
+        if (!(container instanceof HTMLElement)) return;
+
+        return attachSplitScrollSync(container, () => getInstance() ?? null);
+    }, [loading, twoColumnEditor]);
 
     // Widen the link chip and add an "OPEN" button to it
     useEffect(() => {

@@ -33,6 +33,7 @@
     "@milkdown/preset-commonmark": "^6.5.4",
     "@milkdown/preset-gfm": "^6.5.4",
     "@milkdown/prose": "^6.5.4",
+    "@codemirror/view": "^6.7.3",
     "@milkdown/react": "^6.5.4",
     "@milkdown/theme-nord": "^6.5.4",
     "@milkdown/theme-tokyo": "^6.5.4",
