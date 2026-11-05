@@ -155,9 +155,13 @@ const MilkdownEditor: React.FC<MilkdownEditor> = forwardRef<Editor, MilkdownEdit
             const instance = getInstance();
             if (!instance || instance.status !== EditorStatus.Created) return;
             instance.action((ctx) => {
-                // ToggleSplitEditing flips the state, so only call it when it differs
+                /*
+                 * The split panel is created visible by the plugin, so "value" is
+                 * true while the panel is hidden(single column). ToggleSplitEditing
+                 * flips the value, so only call it when the state differs.
+                 */
                 const { value } = ctx.get(splitEditingCtx);
-                if (value === twoColumnEditor) return;
+                if (value === !twoColumnEditor) return;
                 ctx.get(commandsCtx).call(ToggleSplitEditing);
             });
         }, 1);
