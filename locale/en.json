@@ -37,6 +37,7 @@
   "preferences.language": "Language",
   "preferences.lightTheme": "Editor theme",
   "preferences.relaunch": "You need to re-launch to apply the changes",
+  "preferences.rememberView": "Remember current view",
   "preferences.rememberWindowState": "Remember window size and position",
   "preferences.saveBlur": "Save when editor blurred",
   "preferences.saveInterval": "Save interval (sec)",

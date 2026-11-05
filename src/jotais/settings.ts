@@ -13,6 +13,10 @@ interface Setting {
     defaultPath: string;
     vibrancy: 'mica' | 'arcylic' | 'none';
     rememberWindowState: boolean;
+    rememberView: boolean;
+    viewTwoColumn: boolean;
+    viewSource: boolean;
+    viewOutline: boolean;
     outlineWidth: number;
 }
 
@@ -28,5 +32,9 @@ export const settingsJotai = atomWithStorage<Setting>('settings', {
     defaultPath: '',
     vibrancy: 'none',
     rememberWindowState: false,
+    rememberView: false,
+    viewTwoColumn: false,
+    viewSource: false,
+    viewOutline: false,
     outlineWidth: 240
 });

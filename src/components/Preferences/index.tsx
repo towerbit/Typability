@@ -225,6 +225,17 @@ const Preferences: React.FC<PerferencesProps> = ({
                         <div className={styles.option}>
                             <p className={styles.description}>
                                 <FormattedMessage
+                                    id="preferences.rememberView"
+                                    defaultMessage="Remember current view"
+                                />
+                            </p>
+                            <Switch checked={settings.rememberView ?? false} onChange={(e, data) => {
+                                setSetting('rememberView', data.checked);
+                            }} />
+                        </div>
+                        <div className={styles.option}>
+                            <p className={styles.description}>
+                                <FormattedMessage
                                     id="preferences.autoSave"
                                     defaultMessage="Auto Save"
                                 />

@@ -75,10 +75,17 @@ export const openFileJotai = atom(null, async (get, set, path: string | null) =>
         if (result) await set(savingJotai, true);
     }
 
-    // Every document is opened in the plain single-column WYSIWYG view without the outline
-    set(sourceViewJotai, false);
-    set(twoColumnJotai, false);
-    set(outlineJotai, false);
+    // Restore the remembered view, or fall back to the plain single-column WYSIWYG view
+    const settings = get(settingsJotai);
+    if (settings.rememberView) {
+        set(sourceViewJotai, settings.viewSource);
+        set(twoColumnJotai, settings.viewTwoColumn);
+        set(outlineJotai, settings.viewOutline);
+    } else {
+        set(sourceViewJotai, false);
+        set(twoColumnJotai, false);
+        set(outlineJotai, false);
+    }
 
     if (path === null) {
         untitledCount += 1;

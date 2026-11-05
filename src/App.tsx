@@ -10,6 +10,7 @@ import { useEffect, useRef } from "react";
 import { FluentProvider, webLightTheme, webDarkTheme } from '@fluentui/react-components';
 import useIsDarkMode from "./hooks/dark";
 import useRememberWindowState from "./hooks/windowState";
+import useRememberView from "./hooks/rememberView";
 import Preferences from "./components/Preferences";
 import { settingsJotai } from "./jotais/settings";
 import { useKeyPress, useInterval, useEventListener, useAsyncEffect } from "ahooks";
@@ -53,7 +54,7 @@ function App () {
     const editorTheme = (typoraTheme ? 'nord' : activeTheme) as 'nord' | 'nordDark' | 'tokyo';
     const editorInstance = useRef<Editor>(null);    const sourceEditorRef = useRef<SourceEditorHandle>(null);
     useRememberWindowState();
-
+    useRememberView();
     // Initialize
     useAsyncEffect(async () => {
         // Detect system type

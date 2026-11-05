@@ -36,6 +36,7 @@
   "preferences.language": "語言",
   "preferences.lightTheme": "編輯器主題",
   "preferences.relaunch": "你需要重新啟動程序讓更改生效",
+  "preferences.rememberView": "記住目前檢視",
   "preferences.rememberWindowState": "記住視窗大小和位置",
   "preferences.saveBlur": "當編輯器失去焦點時儲存",
   "preferences.saveInterval": "自動儲存間隔（秒）",
