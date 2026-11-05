@@ -4,8 +4,8 @@ import availableLanguage from '../../locale';
 interface Setting {
     language: keyof typeof availableLanguage;
     appearance: 'system' | 'light' | 'dark';
-    theme: 'nord' | 'nordDark' | 'tokyo';
-    themeDark: 'nord' | 'nordDark' | 'tokyo';
+    theme: 'nord' | 'nordDark' | 'tokyo' | 'github' | 'newsprint' | 'night' | 'pixyll' | 'whitey';
+    themeDark: 'nord' | 'nordDark' | 'tokyo' | 'github' | 'newsprint' | 'night' | 'pixyll' | 'whitey';
     syntax: 'gfm' | 'commonmark';
     autoSave: boolean;
     saveBlur: boolean;

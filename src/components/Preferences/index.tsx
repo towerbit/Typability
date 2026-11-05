@@ -32,8 +32,17 @@ interface PerferencesProps {
 const themeMap = {
     nord: 'Nord',
     nordDark: 'Nord (Dark)',
-    tokyo: 'Tokyo'
+    tokyo: 'Tokyo',
+    github: 'Github (Typora)',
+    newsprint: 'Newsprint (Typora)',
+    night: 'Night (Typora)',
+    pixyll: 'Pixyll (Typora)',
+    whitey: 'Whitey (Typora)'
 };
+
+const themeOptions = Object.keys(themeMap).map((key) => (
+    <Option value={key} key={key}>{themeMap[key as keyof typeof themeMap]}</Option>
+));
 
 // @todo multi-language
 const syntaxMap = {
@@ -145,9 +154,7 @@ const Preferences: React.FC<PerferencesProps> = ({
                                     setSetting('theme', data.optionValue);
                                 }}
                             >
-                                <Option value="nord">Nord</Option>
-                                <Option value="nordDark">Nord (Dark)</Option>
-                                <Option value="tokyo">Tokyo</Option>
+                                {themeOptions}
                             </Dropdown>
                         </div>
                         <div className={styles.option}>
@@ -163,9 +170,7 @@ const Preferences: React.FC<PerferencesProps> = ({
                                     setSetting('themeDark', data.optionValue);
                                 }}
                             >
-                                <Option value="nord">Nord</Option>
-                                <Option value="nordDark">Nord (Dark)</Option>
-                                <Option value="tokyo">Tokyo</Option>
+                                {themeOptions}
                             </Dropdown>
                         </div>
                         <div className={styles.option}>

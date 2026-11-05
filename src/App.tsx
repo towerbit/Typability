@@ -47,6 +47,10 @@ function App () {
     // Older settings don't have the appearance field, keep following the system for them
     const appearance = settings.appearance ?? 'system';
     const isDarkMode = appearance === 'system' ? systemIsDark : appearance === 'dark';
+    const activeTheme = isDarkMode ? settings.themeDark : settings.theme;
+    // Typora themes are css overlays on top of the nord milkdown theme
+    const typoraTheme = /^(github|newsprint|night|pixyll|whitey)$/.test(activeTheme) ? activeTheme : undefined;
+    const editorTheme = (typoraTheme ? 'nord' : activeTheme) as 'nord' | 'nordDark' | 'tokyo';
     const editorInstance = useRef<Editor>(null);
     const sourceEditorRef = useRef<SourceEditorHandle>(null);
     useRememberWindowState();
@@ -148,10 +152,13 @@ function App () {
     return (
         <FluentProvider theme={isDarkMode ? webDarkTheme : webLightTheme} className='provider'>
             <IntlProvider defaultLocale='en' locale={settings.language} messages={localeData[settings.language].message}>
-                <div className={classNames(styles.container, {
-                    [styles.window]: !settings.vibrancy || settings.vibrancy === 'none',
-                    [styles.mac]: vibrancy.vibrancy
-                })}>
+                <div
+                    data-theme={typoraTheme}
+                    className={classNames(styles.container, {
+                        [styles.window]: !settings.vibrancy || settings.vibrancy === 'none',
+                        [styles.mac]: vibrancy.vibrancy
+                    })}
+                >
                     <TitleBar editorInstance={editorInstance} />
                     <div className={styles.body}>
                         {outline && <Outline
@@ -174,7 +181,7 @@ function App () {
                                 }}
                                 twoColumnEditor={twoColumn}
                                 syntaxOption={settings.syntax}
-                                theme={isDarkMode ? settings.themeDark : settings.theme}
+                                theme={editorTheme}
                                 ref={editorInstance}
                             />}
                         </div>
