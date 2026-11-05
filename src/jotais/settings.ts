@@ -1,4 +1,5 @@
-import { atomWithStorage } from "jotai/utils";
+import { atom } from "jotai";
+import { invoke } from '@tauri-apps/api/tauri';
 import availableLanguage from '../../locale';
 
 interface Setting {
@@ -20,7 +21,7 @@ interface Setting {
     outlineWidth: number;
 }
 
-export const settingsJotai = atomWithStorage<Setting>('settings', {
+export const defaultSettings: Setting = {
     language: navigator.language.toLocaleLowerCase() as keyof typeof availableLanguage,
     appearance: 'system',
     theme: 'nord',
@@ -37,4 +38,24 @@ export const settingsJotai = atomWithStorage<Setting>('settings', {
     viewSource: false,
     viewOutline: false,
     outlineWidth: 240
-}, undefined, { getOnInit: true });
+};
+
+type SettingUpdate = Setting | ((previous: Setting) => Setting);
+
+const baseAtom = atom<Setting>(defaultSettings);
+
+/*
+ * Settings live in app_config_dir/settings.json on the rust side, so they can
+ * be read before the webview is created and are easy to back up.
+ */
+export const settingsJotai = atom(
+    (get) => get(baseAtom),
+    (get, set, update: SettingUpdate) => {
+        const next = typeof update === 'function'
+            ? (update as (previous: Setting) => Setting)(get(baseAtom))
+            : update;
+
+        set(baseAtom, next);
+        invoke('save_settings', { settings: JSON.stringify(next) }).catch(() => undefined);
+    }
+);

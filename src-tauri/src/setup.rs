@@ -22,6 +22,29 @@ fn window_state_path(app: &AppHandle) -> Option<PathBuf> {
     tauri::api::path::app_config_dir(&app.config()).map(|dir| dir.join("window-state.json"))
 }
 
+fn settings_path (app: &AppHandle) -> Option<PathBuf> {
+    tauri::api::path::app_config_dir(&app.config()).map(|dir| dir.join("settings.json"))
+}
+
+/// Preferences are kept in a plain json file next to the window state.
+#[tauri::command]
+pub fn load_settings (app: AppHandle) -> String {
+    settings_path(&app)
+        .and_then(|path| fs::read_to_string(path).ok())
+        .unwrap_or_default()
+}
+
+#[tauri::command]
+pub fn save_settings (app: AppHandle, settings: String) -> Result<(), String> {
+    let path = settings_path(&app).ok_or_else(|| "missing config directory".to_string())?;
+
+    if let Some(parent) = path.parent() {
+        fs::create_dir_all(parent).map_err(|e| e.to_string())?;
+    }
+
+    fs::write(path, settings).map_err(|e| e.to_string())
+}
+
 fn load_window_state(app: &AppHandle) -> Option<WindowState> {
     let content = fs::read(window_state_path(app)?).ok()?;
     serde_json::from_slice(&content).ok()
