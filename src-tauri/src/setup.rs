@@ -26,28 +26,105 @@ fn settings_path (app: &AppHandle) -> Option<PathBuf> {
     tauri::api::path::app_config_dir(&app.config()).map(|dir| dir.join("settings.json"))
 }
 
-/// Preferences are kept in a plain json file next to the window state.
-#[tauri::command]
-pub fn load_settings (app: AppHandle) -> String {
-    settings_path(&app)
-        .and_then(|path| fs::read_to_string(path).ok())
-        .unwrap_or_default()
+/// One writer at a time: window move/resize and preference changes both touch settings.json
+static SETTINGS_LOCK: std::sync::Mutex<()> = std::sync::Mutex::new(());
+
+fn lock_settings () -> std::sync::MutexGuard<'static, ()> {
+    SETTINGS_LOCK.lock().unwrap_or_else(|error| error.into_inner())
 }
 
-#[tauri::command]
-pub fn save_settings (app: AppHandle, settings: String) -> Result<(), String> {
-    let path = settings_path(&app).ok_or_else(|| "missing config directory".to_string())?;
+fn read_settings_value (app: &AppHandle) -> serde_json::Value {
+    let value = settings_path(app)
+        .and_then(|path| fs::read_to_string(path).ok())
+        .and_then(|content| serde_json::from_str(&content).ok());
+
+    match value {
+        Some(value @ serde_json::Value::Object(_)) => value,
+        _ => serde_json::Value::Object(serde_json::Map::new())
+    }
+}
+
+fn write_settings_value (app: &AppHandle, value: &serde_json::Value) -> Result<(), String> {
+    let path = settings_path(app).ok_or_else(|| "missing config directory".to_string())?;
 
     if let Some(parent) = path.parent() {
         fs::create_dir_all(parent).map_err(|e| e.to_string())?;
     }
 
-    fs::write(path, settings).map_err(|e| e.to_string())
+    fs::write(path, serde_json::to_string_pretty(value).map_err(|e| e.to_string())?)
+        .map_err(|e| e.to_string())
+}
+
+/// Move the old window-state.json into settings.json on the first launch
+fn migrate_legacy_window_state (app: &AppHandle, value: &mut serde_json::Value) -> bool {
+    if value.get("windowState").is_some() {
+        return false;
+    }
+
+    let legacy = window_state_path(app)
+        .and_then(|path| fs::read(path).ok())
+        .and_then(|bytes| serde_json::from_slice::<serde_json::Value>(&bytes).ok());
+
+    match (legacy, value.as_object_mut()) {
+        (Some(legacy), Some(object)) => {
+            object.insert("windowState".to_string(), legacy);
+            true
+        }
+        _ => false
+    }
+}
+
+fn remove_legacy_window_state (app: &AppHandle) {
+    if let Some(path) = window_state_path(app) {
+        let _ = fs::remove_file(path);
+    }
+}
+
+#[tauri::command]
+pub fn load_settings (app: AppHandle) -> String {
+    let _guard = lock_settings();
+    let mut value = read_settings_value(&app);
+    let migrated = migrate_legacy_window_state(&app, &mut value);
+
+    if migrated && write_settings_value(&app, &value).is_ok() {
+        remove_legacy_window_state(&app);
+    }
+
+    serde_json::to_string(&value).unwrap_or_default()
+}
+
+#[tauri::command]
+pub fn save_settings (app: AppHandle, settings: String) -> Result<(), String> {
+    let _guard = lock_settings();
+    let mut value = read_settings_value(&app);
+    migrate_legacy_window_state(&app, &mut value);
+
+    // Never let a preference write drop the window geometry
+    let window = value.get("windowState").cloned();
+    let incoming: serde_json::Value = serde_json::from_str(&settings).map_err(|e| e.to_string())?;
+
+    if let (Some(object), Some(target)) = (incoming.as_object(), value.as_object_mut()) {
+        for (key, item) in object {
+            target.insert(key.clone(), item.clone());
+        }
+    }
+
+    if let Some(window) = window {
+        if let Some(target) = value.as_object_mut() {
+            target.insert("windowState".to_string(), window);
+        }
+    }
+
+    write_settings_value(&app, &value)
 }
 
 fn load_window_state(app: &AppHandle) -> Option<WindowState> {
-    let content = fs::read(window_state_path(app)?).ok()?;
-    serde_json::from_slice(&content).ok()
+    let _guard = lock_settings();
+    let mut value = read_settings_value(app);
+    migrate_legacy_window_state(app, &mut value);
+
+    value.get("windowState")
+        .and_then(|state| serde_json::from_value::<WindowState>(state.clone()).ok())
 }
 
 /// How much of the window has to stay on screen to consider its position usable
@@ -115,17 +192,15 @@ fn restore_window_state(app: &mut App, label: &str) {
 }
 
 fn write_window_state(app: &AppHandle, state: WindowState) {
-    let path = match window_state_path(app) {
-        Some(path) => path,
-        None => return,
-    };
-    if let Some(dir) = path.parent() {
-        if fs::create_dir_all(dir).is_err() {
-            return;
+    let _guard = lock_settings();
+    let mut value = read_settings_value(app);
+    migrate_legacy_window_state(app, &mut value);
+
+    if let Ok(window) = serde_json::to_value(state) {
+        if let Some(object) = value.as_object_mut() {
+            object.insert("windowState".to_string(), window);
         }
-    }
-    if let Ok(content) = serde_json::to_vec(&state) {
-        let _ = fs::write(path, content);
+        let _ = write_settings_value(app, &value);
     }
 }
 

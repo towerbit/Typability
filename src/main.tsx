@@ -16,7 +16,9 @@ async function bootstrap () {
         const raw = saved || window.localStorage.getItem('settings') || '';
 
         if (raw) {
-            const parsed = JSON.parse(raw) as Partial<typeof defaultSettings>;
+            const parsed = JSON.parse(raw) as Partial<typeof defaultSettings> & { windowState?: unknown };
+            // Window geometry is owned by the rust side, don't put it back into the atom
+            delete parsed.windowState;
             getDefaultStore().set(settingsJotai, { ...defaultSettings, ...parsed });
         }
     } catch {
