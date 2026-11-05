@@ -21,3 +21,7 @@ export const vibrancyJotai = atom<VibrancyConfig>(defaultVibrancyConfig);
 export const twoColumnJotai = atom<boolean>(false);
 /** Whether the editor shows the markdown source instead of the WYSIWYG view */
 export const sourceViewJotai = atom<boolean>(false);
+/** Whether the outline sidebar is shown */
+export const outlineJotai = atom<boolean>(false);
+/** Caret position requested by the outline, consumed by the source editor */
+export const outlineJumpJotai = atom<{ offset: number; key: number } | null>(null);

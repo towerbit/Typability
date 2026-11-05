@@ -1,0 +1,30 @@
+.outline {
+    flex: 0 0 240px;
+    width: 240px;
+    height: calc(100vh - 1rem - 40px);
+    box-sizing: border-box;
+    padding: 8px 4px;
+    overflow-y: auto;
+    border-right: 1px solid var(--colorNeutralStroke2);
+    font-size: 13px;
+    color: var(--colorNeutralForeground1);
+    user-select: none;
+
+    .item {
+        padding: 4px 8px;
+        border-radius: 4px;
+        cursor: pointer;
+        white-space: nowrap;
+        overflow: hidden;
+        text-overflow: ellipsis;
+
+        &:hover {
+            background-color: var(--colorNeutralBackground1Hover);
+        }
+    }
+
+    .empty {
+        padding: 8px;
+        opacity: 0.5;
+    }
+}

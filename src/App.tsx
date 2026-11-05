@@ -3,7 +3,7 @@ import styles from './App.module.scss';
 import TitleBar from "./components/TitleBar";
 import { useAtom } from "jotai";
 import { contentJotai, filePathJotai, openFileJotai, originalContentJotai, savedJotai, savingJotai } from "./jotais/file";
-import { aboutJotai, loadingJotai, preferenceJotai, sourceViewJotai, toolbarJotai, twoColumnJotai, vibrancyJotai } from "./jotais/ui";
+import { aboutJotai, loadingJotai, outlineJotai, preferenceJotai, sourceViewJotai, toolbarJotai, twoColumnJotai, vibrancyJotai } from "./jotais/ui";
 import classNames from "classnames";
 import { Spinner } from "@fluentui/react-components";
 import { useEffect, useRef } from "react";
@@ -20,6 +20,7 @@ import { appWindow } from '@tauri-apps/api/window';
 import { TauriEvent } from '@tauri-apps/api/event';
 import FloatingToolbar from "./components/FloatingToolbar";
 import SourceEditor from "./components/SourceEditor";
+import Outline from "./components/Outline";
 import { Editor } from "@milkdown/core";
 import { IntlProvider } from 'react-intl';
 import localeData from '../locale';
@@ -33,6 +34,7 @@ function App () {
     const [, setToolbar] = useAtom(toolbarJotai);
     const [twoColumn] = useAtom(twoColumnJotai);
     const [sourceView] = useAtom(sourceViewJotai);
+    const [outline] = useAtom(outlineJotai);
     const [saved, setSaved] = useAtom(savedJotai);
     const [, setOriginalContent] = useAtom(originalContentJotai);
     const [saving, setSaving] = useAtom(savingJotai);
@@ -149,25 +151,28 @@ function App () {
                     [styles.mac]: vibrancy.vibrancy
                 })}>
                     <TitleBar editorInstance={editorInstance} />
-                    <div className={styles.editor} spellCheck={false}>
-                        {sourceView && <SourceEditor />}
-                        {!sourceView && <MilkdownEditor
-                            useMenu={false}
-                            useSlash={settings.slash}
-                            content={content}
-                            onMarkdownUpdated={(markdown) => {
-                                setContent(markdown);
-                            }}
-                            onContentLoaded={(markdown) => {
-                                setOriginalContent(markdown);
-                                setContent(markdown);
-                                setSaved(true);
-                            }}
-                            twoColumnEditor={twoColumn}
-                            syntaxOption={settings.syntax}
-                            theme={isDarkMode ? settings.themeDark : settings.theme}
-                            ref={editorInstance}
-                        />}
+                    <div className={styles.body}>
+                        {outline && <Outline editorInstance={editorInstance} />}
+                        <div className={styles.editor} spellCheck={false}>
+                            {sourceView && <SourceEditor />}
+                            {!sourceView && <MilkdownEditor
+                                useMenu={false}
+                                useSlash={settings.slash}
+                                content={content}
+                                onMarkdownUpdated={(markdown) => {
+                                    setContent(markdown);
+                                }}
+                                onContentLoaded={(markdown) => {
+                                    setOriginalContent(markdown);
+                                    setContent(markdown);
+                                    setSaved(true);
+                                }}
+                                twoColumnEditor={twoColumn}
+                                syntaxOption={settings.syntax}
+                                theme={isDarkMode ? settings.themeDark : settings.theme}
+                                ref={editorInstance}
+                            />}
+                        </div>
                     </div>
                     <div
                         data-tauri-drag-region

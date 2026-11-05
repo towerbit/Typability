@@ -2,7 +2,7 @@ import React from 'react';
 import { Menu, MenuButton, MenuDivider, MenuItem, MenuItemCheckbox, MenuList, MenuPopover, MenuTrigger } from '@fluentui/react-components';
 import { DocumentEdit16Regular } from '@fluentui/react-icons';
 import { useAtom } from 'jotai';
-import { editMenuJotai, sourceViewJotai, toolbarJotai, twoColumnJotai } from '../../jotais/ui';
+import { editMenuJotai, outlineJotai, sourceViewJotai, toolbarJotai, twoColumnJotai } from '../../jotais/ui';
 import { Editor, commandsCtx, editorViewCtx, parserCtx } from '@milkdown/core';
 import { FormattedMessage } from 'react-intl';
 import { InsertTable } from '@milkdown/preset-gfm';
@@ -30,6 +30,7 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
     const [, setEditMenu] = useAtom(editMenuJotai);
     const [twoColumn, setTwoColumn] = useAtom(twoColumnJotai);
     const [sourceView, setSourceView] = useAtom(sourceViewJotai);
+    const [outline, setOutline] = useAtom(outlineJotai);
 
     return (
         <Menu
@@ -39,7 +40,10 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
             hasCheckmarks
             checkedValues={{
                 twoColumnEditor: twoColumn ? ['twoColumn'] : [],
-                view: sourceView ? ['source'] : []
+                view: [
+                    ...(sourceView ? ['source'] : []),
+                    ...(outline ? ['outline'] : [])
+                ]
             }}
             onCheckedValueChange={(e, data) => {
                 // The two views are mutually exclusive
@@ -49,9 +53,10 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
                     if (checked) setSourceView(false);
                 }
                 if (data.name === 'view') {
-                    const checked = data.checkedItems.includes('source');
-                    setSourceView(checked);
-                    if (checked) setTwoColumn(false);
+                    const nextSourceView = data.checkedItems.includes('source');
+                    setSourceView(nextSourceView);
+                    setOutline(data.checkedItems.includes('outline'));
+                    if (nextSourceView) setTwoColumn(false);
                 }
             }}
         >
@@ -152,6 +157,16 @@ const EditMenu: React.FC<EditMenu> = ({editorInstance}) => {
                         <FormattedMessage
                             id='menu.edit.sourceView'
                             defaultMessage='Source code view'
+                        />
+                    </MenuItemCheckbox>
+                    <MenuItemCheckbox
+                        name='view'
+                        value='outline'
+                        persistOnClick={false}
+                    >
+                        <FormattedMessage
+                            id='menu.edit.outline'
+                            defaultMessage='Outline sidebar'
                         />
                     </MenuItemCheckbox>
                 </MenuList>
